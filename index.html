@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academia Logaritmo - Madrid</title>
+<meta name="description" content="Academia Logaritmo en Madrid. Clases de Matemáticas, Física, Química y Dibujo Técnico para bachillerato y selectividad.">
+<style>
+  /* ============ RESET & BASE ============ */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #1a2540;
+    line-height: 1.6;
+    background: #fff;
+  }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; text-decoration: none; }
+
+  :root {
+    --azul-oscuro: #112849;
+    --azul-medio: #1a3a5f;
+    --amarillo: #f5b941;
+    --amarillo-claro: #f7c75c;
+    --naranja: #d97a3d;
+    --texto-claro: #f5f5f5;
+    --gris-claro: #e8eef3;
+  }
+
+  /* ============ HEADER ============ */
+  header {
+    background: var(--azul-oscuro);
+    color: #fff;
+    padding: 15px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-wrap: wrap;
+  }
+  .logo {
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+    font-size: 1.8rem;
+    line-height: 1;
+  }
+  .logo .academia { font-size: 0.9rem; color: #fff; display: block; }
+  .logo .nombre { color: var(--amarillo); }
+  .logo .nombre .blanco { color: #fff; }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 35px;
+  }
+  nav a {
+    color: #fff;
+    font-size: 1.05rem;
+    padding: 8px 14px;
+    border-radius: 4px;
+    transition: background 0.25s;
+  }
+  nav a:hover, nav a.active {
+    background: #fff;
+    color: var(--azul-oscuro);
+  }
+  .contacto-header {
+    text-align: right;
+    font-size: 0.9rem;
+  }
+  .contacto-header a {
+    color: var(--amarillo);
+    text-decoration: underline;
+    font-weight: 600;
+  }
+
+  /* ============ HERO ============ */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 480px;
+    background: var(--gris-claro);
+  }
+  .hero-img {
+    background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)),
+                url('https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=900') center/cover;
+    min-height: 480px;
+  }
+  .hero-text {
+    background: var(--azul-oscuro);
+    color: #fff;
+    padding: 80px 70px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .hero-text h1 {
+    color: var(--amarillo);
+    font-size: 2.4rem;
+    margin-bottom: 30px;
+  }
+  .hero-text p {
+    font-size: 1.15rem;
+    margin-bottom: 20px;
+    line-height: 1.7;
+  }
+
+  /* ============ SECCIÓN AMARILLA ============ */
+  .seccion-mision {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: var(--azul-medio);
+    min-height: 420px;
+  }
+  .caja-amarilla-wrap {
+    padding: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .caja-amarilla {
+    background: var(--amarillo);
+    padding: 45px 50px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.05rem;
+    line-height: 1.8;
+    max-width: 480px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  }
+  .caja-amarilla p { margin-bottom: 15px; }
+  .montana {
+    background: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900') center/cover;
+    min-height: 420px;
+  }
+
+  /* ============ FRASE ============ */
+  .frase {
+    background: var(--gris-claro);
+    padding: 60px 40px;
+    text-align: center;
+  }
+  .frase blockquote {
+    font-size: 1.4rem;
+    font-style: italic;
+    color: var(--azul-oscuro);
+    max-width: 900px;
+    margin: 0 auto 15px;
+    font-weight: 500;
+  }
+  .frase cite {
+    color: var(--amarillo);
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  /* ============ ASIGNATURAS ============ */
+  .asignaturas {
+    background: var(--azul-oscuro);
+    color: #fff;
+    padding: 50px 20px 80px;
+    position: relative;
+  }
+  .asignaturas h2 {
+    text-align: center;
+    color: var(--amarillo);
+    font-size: 3rem;
+    font-weight: 400;
+    letter-spacing: 2px;
+    margin-bottom: 60px;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  .card {
+    padding: 35px 30px;
+    border-radius: 8px;
+    position: relative;
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  }
+  .card.azul { background: #2c5777; order: 2; }
+  .card.medio { background: #1f3b56; order: 1; }
+  .card.negro { background: #1a1f2e; order: 3; }
+  .card .numero {
+    width: 65px;
+    height: 65px;
+    background: #4a5b70;
+    color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    position: absolute;
+    top: -32px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .card h3 {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 400;
+    margin: 20px 0 25px;
+  }
+  .card .destacado { color: var(--amarillo); margin-bottom: 18px; }
+  .card .subtitulo { font-weight: 700; margin: 18px 0 10px; }
+  .card ul { padding-left: 22px; margin-top: 8px; }
+  .card ul li { margin-bottom: 8px; font-weight: 600; }
+
+  /* ============ PRECIOS ============ */
+  .precios {
+    padding: 70px 20px;
+    background: #fff;
+    text-align: center;
+  }
+  .precios h2 {
+    font-size: 3.5rem;
+    color: var(--azul-oscuro);
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .precios .subtitulo {
+    font-size: 2rem;
+    color: var(--azul-oscuro);
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+  .precios .sin-permanencia {
+    font-style: italic;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: var(--azul-oscuro);
+    margin-bottom: 30px;
+  }
+  .matricula {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 18px;
+    max-width: 700px;
+    margin: 0 auto 15px;
+    font-weight: 700;
+    color: var(--azul-oscuro);
+    font-size: 1.05rem;
+  }
+  .nota-asterisco {
+    max-width: 600px;
+    margin: 0 auto 50px;
+    font-size: 0.95rem;
+    color: #555;
+    text-align: right;
+    padding: 0 20px;
+  }
+  .nota-asterisco b { color: var(--azul-oscuro); }
+
+  .precios-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 50px 80px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .precio-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+  }
+  .circulo {
+    width: 240px;
+    height: 240px;
+    border: 6px solid var(--naranja);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    background: #fff;
+  }
+  .circulo .horas {
+    font-size: 1.7rem;
+    color: var(--azul-oscuro);
+    font-weight: 500;
+  }
+  .circulo .mensual {
+    font-size: 0.95rem;
+    color: #444;
+    margin-bottom: 14px;
+  }
+  .circulo .precio {
+    font-size: 2rem;
+    color: var(--azul-oscuro);
+    font-weight: 500;
+  }
+  .circulo .hora {
+    font-size: 0.9rem;
+    color: #555;
+    margin-top: 6px;
+  }
+
+  .privadas {
+    margin-top: 70px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .privadas h3 {
+    text-align: left;
+    color: var(--azul-oscuro);
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+  }
+  .privadas .nota {
+    text-align: left;
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 25px;
+  }
+  .privadas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .circulo-pequeno {
+    width: 180px;
+    height: 180px;
+    border: 5px solid var(--naranja);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 0 auto;
+  }
+  .circulo-pequeno .horas { font-size: 1.4rem; color: var(--azul-oscuro); }
+  .circulo-pequeno .precio { font-size: 1.4rem; margin-top: 8px; color: var(--azul-oscuro); }
+
+  /* ============ FAQ ============ */
+  .faq {
+    background: var(--azul-oscuro);
+    color: #fff;
+    padding: 70px 40px;
+  }
+  .faq h2 {
+    text-align: center;
+    color: var(--amarillo);
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+  }
+  .faq-list {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .faq-item {
+    border-bottom: 1px solid rgba(245, 185, 65, 0.3);
+  }
+  .faq-question {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--amarillo);
+    font-size: 1.15rem;
+    padding: 22px 10px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: inherit;
+  }
+  .faq-question::after {
+    content: '⌄';
+    font-size: 1.5rem;
+    transition: transform 0.25s;
+  }
+  .faq-item.open .faq-question::after { transform: rotate(180deg); }
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease, padding 0.35s ease;
+    padding: 0 10px;
+    color: #d6e1ee;
+  }
+  .faq-item.open .faq-answer {
+    max-height: 500px;
+    padding: 0 10px 22px;
+  }
+
+  /* ============ FOOTER ============ */
+  footer {
+    background: var(--azul-oscuro);
+    color: #fff;
+    padding: 50px 40px 25px;
+    border-top: 2px solid var(--amarillo);
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .footer-logo {
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+    font-size: 2.5rem;
+    line-height: 1;
+  }
+  .footer-logo small { font-size: 1.1rem; display: block; color: #fff; }
+  .footer-logo span.amarillo { color: var(--amarillo); }
+  .footer h4 {
+    color: #fff;
+    margin-bottom: 18px;
+    font-size: 1.1rem;
+  }
+  .footer-contacto p { margin-bottom: 12px; }
+  .footer-contacto a { text-decoration: underline; }
+  .footer-bottom {
+    text-align: center;
+    margin-top: 35px;
+    padding-top: 20px;
+    color: var(--amarillo);
+    font-size: 0.95rem;
+  }
+  .footer-bottom a { margin: 0 15px; }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 900px) {
+    header { padding: 12px 20px; flex-direction: column; gap: 12px; }
+    nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
+    .hero, .seccion-mision, .footer-grid { grid-template-columns: 1fr; }
+    .hero-img, .montana { min-height: 280px; }
+    .hero-text { padding: 50px 30px; }
+    .hero-text h1 { font-size: 1.8rem; }
+    .cards { grid-template-columns: 1fr; }
+    .card.azul, .card.medio, .card.negro { order: unset; }
+    .precios h2 { font-size: 2.5rem; }
+    .precios-grid { grid-template-columns: 1fr; }
+    .privadas-grid { grid-template-columns: 1fr; }
+    .caja-amarilla-wrap { padding: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <span class="academia">Academia</span>
+    <span class="nombre">log<span class="blanco">a</span>R<span class="blanco">itm</span>o</span>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="#inicio" class="active">Inicio</a></li>
+      <li><a href="#curso">Curso 2025/26</a></li>
+      <li><a href="#informacion">Información</a></li>
+      <li><a href="#materiales">Materiales</a></li>
+    </ul>
+  </nav>
+  <div class="contacto-header">
+    <div>(+34) <a href="tel:+34684790506">684 79 05 06</a></div>
+    <div>Fermín Caballero, 38, Madrid</div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="hero-img"></div>
+  <div class="hero-text">
+    <h1>¡Hola!</h1>
+    <p>Te damos la bienvenida a Logaritmo. Aquí no solo estudias, aquí descubres de lo que eres capaz.</p>
+    <p>Bienvenido al lugar donde tu potencial se transforma en resultados.</p>
+  </div>
+</section>
+
+<!-- MISIÓN -->
+<section class="seccion-mision">
+  <div class="caja-amarilla-wrap">
+    <div class="caja-amarilla">
+      <p>Logaritmo surge de unir las ciencias (logaritmos) con las artes (ritmo).</p>
+      <p>Aquí sabemos que estudiar también tiene su propio ritmo. Para nosotros es el tuyo.</p>
+    </div>
+  </div>
+  <div class="montana"></div>
+</section>
+
+<!-- FRASE -->
+<section class="frase">
+  <blockquote>"Hay una fuerza motriz más poderosa que el vapor, la electricidad y la energía atómica: la voluntad"</blockquote>
+  <cite>– Albert Einstein</cite>
+</section>
+
+<!-- ASIGNATURAS -->
+<section class="asignaturas" id="curso">
+  <h2>CLASES POR ASIGNATURAS</h2>
+  <div class="cards">
+    <!-- Card Matemáticas (centro, número 1) -->
+    <div class="card medio">
+      <div class="numero">1</div>
+      <h3>Matemáticas</h3>
+      <p class="destacado">Año tras año la asignatura más difícil de la selectividad de la Comunidad de Madrid.</p>
+      <p>No es fácil hablar de la importancia que tienen las matemáticas.</p>
+      <p style="margin-top:14px;">Aquí su secreto está en las bases.</p>
+      <p class="subtitulo">Este curso es para ti si:</p>
+      <ul>
+        <li>Vas a cursar 1º o 2º de bachillerato.</li>
+        <li>Si no te vale con sacar un 5 en selectividad.</li>
+      </ul>
+    </div>
+    <!-- Card Dibujo Técnico (izq, número 2) -->
+    <div class="card azul">
+      <div class="numero">2</div>
+      <h3>Dibujo Técnico</h3>
+      <p class="destacado">El dibujo es una de las asignaturas más difíciles. Requiere conocimientos, destreza, paciencia y mucha práctica.</p>
+      <p class="subtitulo">¿A quién va destinado?</p>
+      <ul>
+        <li>Si estás cursando 1º o 2º de bachillerato.</li>
+        <li>Si vas a hacer la selectividad.</li>
+        <li>Si vas a hacer 2º sin haber cursado dibujo en 1º.</li>
+      </ul>
+    </div>
+    <!-- Card Física-Química (der, número 3) -->
+    <div class="card negro">
+      <div class="numero">3</div>
+      <h3>Física - Química</h3>
+      <p class="destacado">La física y la química son las asignaturas que más nos ayudan a comprender el funcionamiento del mundo que nos rodea.</p>
+      <p class="subtitulo">En qué nos enfocamos:</p>
+      <ul>
+        <li>Comprender la teoría.</li>
+        <li>Dominar las matemáticas necesarias para resolver los ejercicios.</li>
+        <li>Práctica continua con problemas tipo selectividad.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PRECIOS -->
+<section class="precios" id="informacion">
+  <h2>PRECIOS</h2>
+  <p class="subtitulo">Asignaturas ciencias*</p>
+  <p class="sin-permanencia">Sin permanencia</p>
+  <div class="matricula">Matrícula: Gratis hasta diciembre 2025 y antiguos alumnos</div>
+  <p class="nota-asterisco">*Asignaturas de letras, artes, humanidades y música <b>consultar</b> con el centro <u>precio y disponibilidad</u></p>
+
+  <div class="precios-grid">
+    <div class="precio-item">
+      <div class="circulo">
+        <div class="horas">10h/semana</div>
+        <div class="mensual">(40 horas mensuales)</div>
+        <div class="precio">295€/mes</div>
+        <div class="hora">(7,37 €/hora)</div>
+      </div>
+    </div>
+    <div class="precio-item">
+      <div class="circulo">
+        <div class="horas">8h/semana</div>
+        <div class="mensual">(32 horas mensuales)</div>
+        <div class="precio">256€/mes</div>
+        <div class="hora">(8 €/hora)</div>
+      </div>
+    </div>
+    <div class="precio-item">
+      <div class="circulo">
+        <div class="horas">6h/semana</div>
+        <div class="mensual">(24 horas mensuales)</div>
+        <div class="precio">198€/mes</div>
+        <div class="hora">(8,25 €/hora)</div>
+      </div>
+    </div>
+    <div class="precio-item">
+      <div class="circulo">
+        <div class="horas">4h/semana</div>
+        <div class="mensual">(16 horas mensuales)</div>
+        <div class="precio">136€/mes</div>
+        <div class="hora">(8,50 €/hora)</div>
+      </div>
+    </div>
+    <div class="precio-item">
+      <div class="circulo">
+        <div class="horas">3h/semana</div>
+        <div class="mensual">(12 horas mensuales)</div>
+        <div class="precio">108€/mes</div>
+        <div class="hora">(9 €/hora)</div>
+      </div>
+    </div>
+    <div class="precio-item">
+      <div class="circulo">
+        <div class="horas">2h/semana</div>
+        <div class="mensual">(8 horas mensuales)</div>
+        <div class="precio">85€/mes</div>
+        <div class="hora">(10,62 €/hora)</div>
+      </div>
+    </div>
+    <div class="precio-item" style="grid-column: 1 / -1; justify-content: center;">
+      <div class="circulo">
+        <div class="horas">1h/semana</div>
+        <div class="mensual">(4 horas mensuales)</div>
+        <div class="precio">44€/mes</div>
+        <div class="hora">(11 €/hora)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="privadas">
+    <h3>Clase privada individual*</h3>
+    <p class="nota">*Sujeto a disponibilidad</p>
+    <div class="privadas-grid">
+      <div class="circulo-pequeno">
+        <div class="horas">1 hora</div>
+        <div class="precio">28€/hora</div>
+      </div>
+      <div>
+        <h3>Clase privada para grupos e institutos</h3>
+        <p style="margin-top:15px; color: #444;">Consultar precio y disponibilidad con el centro.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="materiales">
+  <h2>Preguntas frecuentes</h2>
+  <div class="faq-list">
+    <div class="faq-item">
+      <button class="faq-question">¿Cuándo y cuánto se paga por las clases?</button>
+      <div class="faq-answer"><p>El pago se realiza mensualmente por adelantado. Consulta nuestra tabla de precios para conocer el coste según las horas semanales contratadas.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question">¿Qué material debo llevar a las clases?</button>
+      <div class="faq-answer"><p>Cada alumno debe traer su material habitual de estudio: cuaderno, bolígrafos, calculadora científica y los apuntes del instituto. Nosotros aportaremos material complementario y ejercicios.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question">¿Cuál es la política de cancelación?</button>
+      <div class="faq-answer"><p>Sin permanencia. Puedes darte de baja avisando con un mes de antelación.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question">He hecho la prueba de nivel y me faltan las bases, ¿qué hago?</button>
+      <div class="faq-answer"><p>No te preocupes. En Logaritmo trabajamos las bases desde cero si es necesario. Diseñaremos un plan personalizado para que recuperes el nivel.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question">¿Puedo llevar mis dudas y ejercicios de clase a la academia?</button>
+      <div class="faq-answer"><p>¡Por supuesto! Resolvemos dudas concretas de tus clases del instituto y trabajamos los ejercicios que te manden.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question">¿Cuántas clases necesito para ver resultados?</button>
+      <div class="faq-answer"><p>Depende del punto de partida de cada alumno, pero la mayoría notan mejoras significativas en 4-6 semanas con asistencia constante.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question">¿Hacéis milagros?</button>
+      <div class="faq-answer"><p>No, pero trabajamos duro contigo. Con esfuerzo, constancia y método los resultados llegan.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">
+        <small>Academia</small>
+        log<span class="amarillo">a</span>R<span class="amarillo">itm</span>o
+      </div>
+    </div>
+    <div class="footer-contacto">
+      <h4>¿Dónde encontrarnos?</h4>
+      <p>Calle Fermín Caballero 38</p>
+      <p>28034 Madrid</p>
+      <p><a href="tel:+34684790506">(+34) 684 79 05 06</a></p>
+      <p><a href="mailto:info@academialogaritmo.com">info@academialogaritmo.com</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <a href="#">Política de cookies</a>
+    <a href="#">Política de privacidad</a>
+  </div>
+</footer>
+
+<script>
+  // FAQ acordeón
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.parentElement.classList.toggle('open');
+    });
+  });
+
+  // Menú activo al hacer scroll
+  const links = document.querySelectorAll('nav a');
+  links.forEach(l => {
+    l.addEventListener('click', () => {
+      links.forEach(x => x.classList.remove('active'));
+      l.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>
