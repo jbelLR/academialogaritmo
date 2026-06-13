@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fichaje Logaritmo</title>
+  <script src="https://unpkg.com/html5-qrcode"></script>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 16px;
+           background: #0f172a; color: #f1f5f9; text-align: center; }
+    h1 { font-size: 1.3rem; margin: 8px 0 16px; }
+    #reader { width: 340px; max-width: 92vw; margin: 0 auto; border-radius: 12px; overflow: hidden; }
+    #msg { margin: 18px auto; padding: 18px; border-radius: 12px; font-size: 1.3rem;
+           min-height: 28px; max-width: 92vw; background: #1e293b; }
+    #msg.ok  { background: #14532d; }
+    #msg.out { background: #1d4ed8; }
+    #msg.err { background: #7f1d1d; }
+    /* Pantalla de contraseña */
+    #gate { position: fixed; inset: 0; background: #0f172a; display: flex;
+            flex-direction: column; align-items: center; justify-content: center; gap: 14px; }
+    #gate input { padding: 12px; font-size: 1.1rem; border-radius: 8px; border: none; width: 220px; }
+    #gate button { padding: 12px 20px; font-size: 1.1rem; border: none; border-radius: 8px;
+                   background: #2563eb; color: #fff; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- Pantalla de contraseña -->
+  <div id="gate">
+    <h1>🎓 Fichaje Academia Logaritmo</h1>
+    <div>Introduce la contraseña</div>
+    <input id="clave" type="password" onkeydown="if(event.key==='Enter') entrar()">
+    <button onclick="entrar()">Entrar</button>
+    <div id="gateErr" style="color:#fca5a5;min-height:18px;"></div>
+  </div>
+
+  <!-- Lector -->
+  <div id="app" class="hidden">
+    <h1>🎓 Fichaje — acerca tu QR</h1>
+    <div id="reader"></div>
+    <div id="msg">Lector encendido. Acerca un QR.</div>
+  </div>
+
+  <script>
+    /* ===================== CONFIGURACIÓN ===================== */
+    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyzOZj7RSKQRAQ0RUnqI4jhhz7rJXQesUtdkaItE2lbhcLs94zWHAdyEeN9ovrTCfLU3A/exec";  // tu URL que acaba en /exec
+    const CLAVE       = "logaritmo2026";            // misma contraseña que en Codigo.gs
+    /* ======================================================== */
+
+    let ultimo = '', ultimoT = 0;
+
+    function entrar() {
+      const v = document.getElementById('clave').value;
+      if (v === CLAVE) {
+        document.getElementById('gate').classList.add('hidden');
+        document.getElementById('app').classList.remove('hidden');
+        arrancarLector();
+      } else {
+        document.getElementById('gateErr').textContent = 'Contraseña incorrecta';
+      }
+    }
+
+    function arrancarLector() {
+      const scanner = new Html5QrcodeScanner('reader', { fps: 10, qrbox: 240 }, false);
+      scanner.render(onScan);
+    }
+
+    function onScan(text) {
+      const now = Date.now();
+      if (text === ultimo && now - ultimoT < 4000) return; // evita doble lectura
+      ultimo = text; ultimoT = now;
+      // El QR contiene la URL con ?id=A001 -> sacamos solo el id
+      let id = text;
+      const m = text.match(/[?&]id=([^&]+)/i);
+      if (m) id = decodeURIComponent(m[1]);
+      enviar(id);
+    }
+
+    function enviar(id) {
+      mostrarMensaje('', '⏳ Registrando...');
+      const cb = 'cb_' + Date.now();
+      const s = document.createElement('script');
+      window[cb] = function (res) {
+        mostrar(res);
+        delete window[cb];
+        if (s.parentNode) s.parentNode.removeChild(s);
+      };
+      s.onerror = function () { mostrarMensaje('err', '⚠️ No se pudo conectar'); };
+      s.src = BACKEND_URL + '?id=' + encodeURIComponent(id) +
+              '&token=' + encodeURIComponent(CLAVE) + '&callback=' + cb;
+      document.body.appendChild(s);
+    }
+
+    function mostrar(res) {
+      if (res.tipo === 'entrada') {
+        mostrarMensaje('ok', '✅ Hola, ' + res.nombre + ' — entrada ' + res.hora +
+          (res.mesa ? ' · ' + res.mesa : ''));
+      } else if (res.tipo === 'salida') {
+        mostrarMensaje('out', '👋 Hasta luego, ' + res.nombre + ' — salida ' + res.hora +
+          ' (' + res.horas + ' h)');
+      } else {
+        mostrarMensaje('err', '⚠️ ' + res.mensaje);
+      }
+      // Vuelve al mensaje neutro a los 4 segundos
+      setTimeout(function () { mostrarMensaje('', 'Lector encendido. Acerca un QR.'); }, 4000);
+    }
+
+    function mostrarMensaje(clase, txt) {
+      const m = document.getElementById('msg');
+      m.className = clase;
+      m.textContent = txt;
+    }
+  </script>
+</body>
+</html>
