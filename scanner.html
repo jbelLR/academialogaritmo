@@ -50,8 +50,8 @@
     const CLAVE       = "logaritmo2026";            // misma contraseña que en Codigo.gs
     /* ======================================================== */
 
-    let ultimo = '', ultimoT = 0;
     let lector = null;
+    let ocupado = false;   // mientras procesa una lectura, ignora las demás
 
     function entrar() {
       const v = document.getElementById('clave').value;
@@ -77,11 +77,11 @@
     }
 
     function onScan(text) {
-      const now = Date.now();
-      if (text === ultimo && now - ultimoT < 5000) return; // evita repetir el mismo QR
-      ultimo = text; ultimoT = now;
+      if (ocupado) return;                        // ya estamos procesando una lectura
+      ocupado = true;
+      try { lector.pause(true); } catch (e) {}    // congela la cámara mientras registra
       let id = text;
-      const m = text.match(/[?&]id=([^&]+)/i);   // si el QR lleva la URL, saca el id
+      const m = text.match(/[?&]id=([^&]+)/i);    // si el QR lleva la URL, saca el id
       if (m) id = decodeURIComponent(m[1]);
       enviar(id);
     }
@@ -90,12 +90,28 @@
       mostrarMensaje('', '⏳ Registrando...');
       const cb = 'cb_' + Date.now();
       const s = document.createElement('script');
+      let resuelto = false;
+
       window[cb] = function (res) {
+        resuelto = true;
         mostrar(res);
         delete window[cb];
         if (s.parentNode) s.parentNode.removeChild(s);
       };
-      s.onerror = function () { mostrarMensaje('err', '⚠️ No se pudo conectar'); };
+      s.onerror = function () {
+        if (resuelto) return;
+        resuelto = true;
+        mostrarMensaje('err', '⚠️ No se pudo conectar (revisa la URL del backend)');
+        reanudar(3000);
+      };
+      // por si la respuesta nunca llega
+      setTimeout(function () {
+        if (resuelto) return;
+        resuelto = true;
+        mostrarMensaje('err', '⚠️ Sin respuesta del servidor');
+        reanudar(3000);
+      }, 8000);
+
       s.src = BACKEND_URL + '?id=' + encodeURIComponent(id) +
               '&token=' + encodeURIComponent(CLAVE) + '&callback=' + cb;
       document.body.appendChild(s);
@@ -111,7 +127,16 @@
       } else {
         mostrarMensaje('err', '⚠️ ' + res.mensaje);
       }
-      setTimeout(function () { mostrarMensaje('', 'Lector encendido. Acerca un QR.'); }, 4000);
+      reanudar(4000);                             // muestra el resultado y luego reactiva
+    }
+
+    // Vuelve a encender la cámara tras unos segundos
+    function reanudar(ms) {
+      setTimeout(function () {
+        mostrarMensaje('', 'Lector encendido. Acerca un QR.');
+        try { lector.resume(); } catch (e) {}
+        ocupado = false;
+      }, ms);
     }
 
     function mostrarMensaje(clase, txt) {
