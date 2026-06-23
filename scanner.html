@@ -70,8 +70,8 @@
   </div>
 
   <script>
-    const BACKEND_URL="https://script.google.com/macros/s/AKfycbzGpj27c88vUxrAVIxfeznIrcLYfig5Mhgj8-uTznog-BWBZxXL7lJRAOmijv0rwJmceA/exec"; const CLAVE="logaritmo2026";
-    let lector=null, ocupado=false, pendingId=null;
+    const BACKEND_URL="https://script.google.com/macros/s/AKfycbx3vpjOKjqho0gw8MDJrgb2goM-6tkFHSw9So6xwnPyS-9o8_7Qnr4CsTIu2zbP9CoCYA/exec"; const CLAVE="logaritmo2026";
+    let lector=null, ocupado=false, pendingId=null, volverTimer=null;
 
     function entrar(){
       const v=(document.getElementById('clave').value||'').trim().toLowerCase();
@@ -115,9 +115,12 @@
       } else {
         btn.textContent=res.boton||'🔄 Nuevo fichaje';
       }
+      if(volverTimer){clearTimeout(volverTimer);volverTimer=null;}
       document.getElementById('result').className='show '+clase;
+      if(clase==='entrada'||clase==='salida'){ volverTimer=setTimeout(nuevoFichaje, 6000); }
     }
     function nuevoFichaje(){
+      if(volverTimer){clearTimeout(volverTimer);volverTimer=null;}
       document.getElementById('opciones').innerHTML='';
       document.getElementById('result').className='';
       document.getElementById('estado').textContent='Cámara encendida…';
