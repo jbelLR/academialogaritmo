@@ -10,11 +10,14 @@
            background: #0f172a; color: #f1f5f9; text-align: center; }
     h1 { font-size: 1.3rem; margin: 8px 0 16px; }
     #reader { width: 340px; max-width: 92vw; margin: 0 auto; border-radius: 12px; overflow: hidden; }
-    #msg { margin: 18px auto; padding: 18px; border-radius: 12px; font-size: 1.3rem;
+    #msg { margin: 18px auto; padding: 22px 18px; border-radius: 12px;
            min-height: 28px; max-width: 92vw; background: #1e293b; }
     #msg.ok  { background: #14532d; }
     #msg.out { background: #1d4ed8; }
     #msg.err { background: #7f1d1d; }
+    #msg .t1 { font-size: 1.7rem; font-weight: 700; }
+    #msg .t2 { font-size: 1.15rem; margin-top: 10px; opacity: .95; }
+    #msg .t3 { font-size: 1.05rem; margin-top: 14px; opacity: .92; line-height: 1.45; }
     #gate { position: fixed; inset: 0; background: #0f172a; display: flex;
             flex-direction: column; align-items: center; justify-content: center; gap: 14px; z-index: 10; }
     #gate input { padding: 12px; font-size: 1.1rem; border-radius: 8px; border: none; width: 220px; }
@@ -118,16 +121,24 @@
     }
 
     function mostrar(res) {
-      if (res.tipo === 'entrada') {
-        mostrarMensaje('ok', '✅ Hola, ' + res.nombre + ' — entrada ' + res.hora +
-          (res.mesa ? ' · ' + res.mesa : ''));
-      } else if (res.tipo === 'salida') {
-        mostrarMensaje('out', '👋 Hasta luego, ' + res.nombre + ' — salida ' + res.hora +
-          ' (' + res.horas + ' h)');
-      } else {
-        mostrarMensaje('err', '⚠️ ' + res.mensaje);
+      // Compatibilidad con backend antiguo (mandaba 'nombre'/'mensaje')
+      if (!res.titulo) {
+        if (res.tipo === 'entrada') res.titulo = '✅ Hola, ' + res.nombre;
+        else if (res.tipo === 'salida') res.titulo = '👋 Hasta luego, ' + res.nombre;
+        else res.titulo = '⚠️ ' + (res.mensaje || 'Error');
       }
-      reanudar(4000);                             // muestra el resultado y luego reactiva
+      const clase = res.tipo === 'entrada' ? 'ok' : (res.tipo === 'salida' ? 'out' : 'err');
+      let html = '<div class="t1">' + (res.titulo || '') + '</div>';
+      if (res.linea2) html += '<div class="t2">' + res.linea2 + '</div>';
+      if (res.linea3) html += '<div class="t3">' + res.linea3 + '</div>';
+      mostrarHTML(clase, html);
+      reanudar(res.linea3 ? 7000 : 4000);         // deja tiempo para leer la frase graciosa
+    }
+
+    function mostrarHTML(clase, html) {
+      const m = document.getElementById('msg');
+      m.className = clase;
+      m.innerHTML = html;
     }
 
     // Vuelve a encender la cámara tras unos segundos
