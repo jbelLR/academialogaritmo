@@ -3,9 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Academia Logaritmo - Madrid</title>
-<meta name="description" content="Academia Logaritmo en Madrid. Clases de Matemáticas, Física, Química y Dibujo Técnico para bachillerato y selectividad.">
+<title>Academia de Matemáticas y Ciencias en Madrid | Logaritmo</title>
+<meta name="description" content="Academia de Matemáticas, Física-Química y Dibujo Técnico en el Barrio del Pilar (Madrid). Clases para 1º y 2º de Bachillerato y selectividad (EvAU). Sin permanencia.">
+<link rel="canonical" href="https://academialogaritmo.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Academia Logaritmo">
+<meta property="og:locale" content="es_ES">
+<meta property="og:title" content="Academia de Matemáticas y Ciencias en Madrid | Logaritmo">
+<meta property="og:description" content="Clases de Matemáticas, Física-Química y Dibujo Técnico en el Barrio del Pilar (Madrid). Bachillerato y selectividad (EvAU).">
+<meta property="og:url" content="https://academialogaritmo.com/">
+<meta property="og:image" content="https://academialogaritmo.com/logo.png">
 <link rel="icon" type="image/png" href="favicon.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "EducationalOrganization",
+  "name": "Academia Logaritmo",
+  "description": "Academia de Matemáticas, Física-Química y Dibujo Técnico en el Barrio del Pilar (Madrid). Clases para Bachillerato y selectividad (EvAU).",
+  "url": "https://academialogaritmo.com",
+  "logo": "https://academialogaritmo.com/logo.png",
+  "image": "https://academialogaritmo.com/logo.png",
+  "telephone": "+34684790506",
+  "email": "info@academialogaritmo.com",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Calle Fermín Caballero 38",
+    "addressLocality": "Madrid",
+    "addressRegion": "Madrid",
+    "postalCode": "28034",
+    "addressCountry": "ES"
+  },
+  "areaServed": ["Barrio del Pilar", "Fuencarral-El Pardo", "Madrid"],
+  "sameAs": [
+    "https://www.youtube.com/@academialogaritmo",
+    "https://www.instagram.com/academialogaritmo",
+    "https://www.tiktok.com/@academialogaritmo"
+  ]
+}
+</script>
 <style>
 /* ============ RESET & BASE ============ */
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -408,6 +443,32 @@ font-size: 2.5rem;
 line-height: 1;
 }
 .footer-logo img { height: 84px; width: auto; display: block; }
+/* ===== Botón flotante WhatsApp ===== */
+.wa-flotante { position: fixed; bottom: 24px; right: 24px; z-index: 9998; width: 60px; height: 60px; border-radius: 50%; background: #25D366; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(0,0,0,0.3); transition: transform .2s ease, box-shadow .2s ease; }
+.wa-flotante:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+@media (max-width: 600px) { .wa-flotante { width: 54px; height: 54px; bottom: 18px; right: 18px; } .wa-flotante svg { width: 28px; height: 28px; } }
+/* ===== Burbuja/popup tipo WhatsApp ===== */
+.wa-popup { position: fixed; right: 24px; bottom: 96px; z-index: 9998; width: 300px; max-width: calc(100vw - 48px); background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.28); opacity: 0; transform: translateY(14px); pointer-events: none; transition: opacity .3s ease, transform .3s ease; font-family: 'Segoe UI', Tahoma, sans-serif; }
+.wa-popup.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+.wa-popup__header { background: #075E54; color: #fff; padding: 10px 12px; display: flex; align-items: center; gap: 10px; }
+.wa-popup__avatar { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #fff; flex: 0 0 auto; }
+.wa-popup__avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.wa-popup__meta { display: flex; flex-direction: column; line-height: 1.15; }
+.wa-popup__title { font-weight: 700; font-size: 0.92rem; }
+.wa-popup__status { font-size: 0.72rem; opacity: 0.85; }
+.wa-popup__close { margin-left: auto; background: transparent; border: none; color: #fff; font-size: 1.3rem; line-height: 1; cursor: pointer; padding: 0 4px; }
+.wa-popup__body { background: #E5DDD5; padding: 16px 14px; min-height: 64px; }
+.wa-popup__msg { background: #fff; color: #111; border-radius: 0 10px 10px 10px; padding: 9px 12px 6px; font-size: 0.9rem; line-height: 1.4; box-shadow: 0 1px 1px rgba(0,0,0,0.12); max-width: 92%; animation: waMsgIn .25s ease; }
+.wa-popup__time { display: block; text-align: right; font-size: 0.65rem; color: #999; margin-top: 2px; }
+.wa-popup__cta { display: block; background: #25D366; color: #fff; text-align: center; padding: 11px; font-weight: 700; font-size: 0.9rem; text-decoration: none; }
+.wa-popup__cta:hover { background: #1ebe5b; }
+.wa-typing { display: inline-flex; gap: 5px; background: #fff; border-radius: 10px; padding: 11px 13px; box-shadow: 0 1px 1px rgba(0,0,0,0.12); }
+.wa-typing span { width: 7px; height: 7px; border-radius: 50%; background: #9aa0a6; animation: waBlink 1.2s infinite; }
+.wa-typing span:nth-child(2) { animation-delay: .2s; }
+.wa-typing span:nth-child(3) { animation-delay: .4s; }
+@keyframes waBlink { 0%,60%,100% { transform: translateY(0); opacity: .4; } 30% { transform: translateY(-4px); opacity: 1; } }
+@keyframes waMsgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 600px) { .wa-popup { right: 18px; bottom: 84px; width: 270px; } }
 .footer-logo small { font-size: 1.1rem; display: block; color: #fff; }
 .footer-logo span.amarillo { color: var(--amarillo); }
 .footer h4 {
@@ -446,7 +507,7 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <!-- HEADER -->
 <header>
 <div class="logo">
-<a href="#inicio"><img src="logo.png" alt="Academia logaRitmo"></a>
+<a href="#inicio"><img src="logo.png" alt="Academia Logaritmo — clases de matemáticas y ciencias en Madrid"></a>
 </div>
 <nav>
 <ul>
@@ -466,9 +527,11 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <section class="hero" id="inicio">
 <div class="hero-img"></div>
 <div class="hero-text">
-<h1>¡Hola!</h1>
-<p>Te damos la bienvenida a Logaritmo. Aquí no solo estudias, aquí descubres de lo que eres capaz.</p>
-<p>Bienvenido al lugar donde tu potencial se transforma en resultados.</p>
+<p style="color:#fff; font-weight:700; letter-spacing:1px; text-transform:uppercase; font-size:0.95rem; margin-bottom:10px;">¡Hola!</p>
+<h1>Academia de Matemáticas, Física y Dibujo Técnico en Madrid</h1>
+<p>En Logaritmo somos una academia especializada en las asignaturas de ciencias de Bachillerato —Matemáticas, Física y Química y Dibujo Técnico— con preparación específica para la selectividad (EvAU) en Madrid.</p>
+<p>Estamos en el Barrio del Pilar, en la zona norte de Madrid. Preparamos las asignaturas de ciencias de 1º y 2º de Bachillerato y la selectividad (EvAU/PAU).</p>
+<p>En Logaritmo no solo estudias: descubres de lo que eres capaz, y tu potencial se transforma en resultados.</p>
 </div>
 </section>
 
@@ -491,13 +554,13 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 
 <!-- ASIGNATURAS -->
 <section class="asignaturas" id="curso">
-<h2>CLASES POR ASIGNATURAS</h2>
+<h2>Clases de Matemáticas, Física-Química y Dibujo Técnico en Madrid</h2>
 <div class="cards">
 <!-- Card Matemáticas (centro, número 1) -->
 <div class="card medio">
 <div class="numero">1</div>
-<h3>Matemáticas</h3>
-<p class="destacado">Año tras año la asignatura más difícil de la selectividad de la Comunidad de Madrid.</p>
+<h3>Clases de Matemáticas</h3>
+<p class="destacado">Año tras año, Matemáticas es la asignatura más difícil de la selectividad (EvAU) en la Comunidad de Madrid.</p>
 <p>No es fácil hablar de la importancia que tienen las matemáticas.</p>
 <p style="margin-top:14px;">Aquí su secreto está en las bases.</p>
 <p class="subtitulo">Este curso es para ti si:</p>
@@ -509,8 +572,8 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <!-- Card Dibujo Técnico (izq, número 2) -->
 <div class="card azul">
 <div class="numero">2</div>
-<h3>Dibujo Técnico</h3>
-<p class="destacado">El dibujo es una de las asignaturas más difíciles. Requiere conocimientos, destreza, paciencia y mucha práctica.</p>
+<h3>Clases de Dibujo Técnico</h3>
+<p class="destacado">El Dibujo Técnico es una de las asignaturas que más práctica exige: conocimientos, destreza, paciencia y mucha práctica.</p>
 <p class="subtitulo">¿A quién va destinado?</p>
 <ul>
 <li>Si estás cursando 1º o 2º de bachillerato.</li>
@@ -521,8 +584,8 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <!-- Card Física-Química (der, número 3) -->
 <div class="card negro">
 <div class="numero">3</div>
-<h3>Física - Química</h3>
-<p class="destacado">La física y la química son las asignaturas que más nos ayudan a comprender el funcionamiento del mundo que nos rodea.</p>
+<h3>Clases de Física y Química</h3>
+<p class="destacado">La Física y la Química son las asignaturas que más nos ayudan a comprender el funcionamiento del mundo que nos rodea.</p>
 <p class="subtitulo">En qué nos enfocamos:</p>
 <ul>
 <li>Comprender la teoría.</li>
@@ -535,10 +598,10 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 
 <!-- PRECIOS -->
 <section class="precios" id="informacion">
-<h2>PRECIOS</h2>
+<h2>Precios de nuestras clases</h2>
 <p class="subtitulo">Asignaturas ciencias*</p>
 <p class="sin-permanencia">Sin permanencia</p>
-<div class="matricula">Matrícula: Gratis hasta diciembre 2025 y antiguos alumnos</div>
+<div class="matricula">Matrícula gratuita por ser cursos de verano</div>
 <p class="nota-asterisco">*Asignaturas de letras, artes, humanidades y música <b>consultar</b> con el centro <u>precio y disponibilidad</u></p>
 <div class="precios-grid">
 <div class="precio-item">
@@ -616,7 +679,7 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 
 <!-- FAQ -->
 <section class="faq" id="materiales">
-<h2>Preguntas frecuentes</h2>
+<h2>Preguntas frecuentes sobre nuestras clases</h2>
 <div class="faq-list">
 <div class="faq-item">
 <button class="faq-question">¿Cuándo y cuánto se paga por las clases?</button>
@@ -646,6 +709,23 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <button class="faq-question">¿Hacéis milagros?</button>
 <div class="faq-answer"><p>No, pero trabajamos duro contigo. Con esfuerzo, constancia y método los resultados llegan.</p></div>
 </div>
+<div class="faq-item">
+<button class="faq-question">¿Dónde está la academia?</button>
+<div class="faq-answer"><p>En la Calle Fermín Caballero 38, 28034 Madrid (Barrio del Pilar, junto a La Vaguada). Metro Herrera Oria, Avenida de la Ilustración y Barrio del Pilar.</p></div>
+</div>
+<div class="faq-item">
+<button class="faq-question">¿Preparáis la selectividad (EvAU) en Madrid?</button>
+<div class="faq-answer"><p>Sí. Preparamos las asignaturas de ciencias de 1º y 2º de Bachillerato y la selectividad (EvAU/PAU) de la Comunidad de Madrid.</p></div>
+</div>
+</div>
+</section>
+
+<!-- DÓNDE ESTAMOS -->
+<section id="donde-estamos" style="background:var(--gris-claro); padding:60px 24px;">
+<div style="max-width:1000px; margin:0 auto; text-align:center;">
+<h2 style="color:var(--azul-oscuro); font-size:2rem; margin-bottom:18px;">Dónde estamos — academia en el Barrio del Pilar (Madrid)</h2>
+<p style="max-width:760px; margin:0 auto 26px; color:#1a2540; line-height:1.7;">Nos encontrarás en la <strong>Calle Fermín Caballero 38, 28034 Madrid</strong>, en pleno <strong>Barrio del Pilar</strong> (distrito de Fuencarral-El Pardo), junto a La Vaguada. Bien comunicados: metro Herrera Oria, Avenida de la Ilustración y Barrio del Pilar (línea 9), y autobuses 67, 127, 133 y 815.</p>
+<iframe title="Mapa de Academia Logaritmo en Madrid" src="https://www.google.com/maps?q=Calle+Ferm%C3%ADn+Caballero+38,+28034+Madrid&output=embed" width="100%" height="320" style="border:0; border-radius:8px; max-width:760px;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 </div>
 </section>
 
@@ -654,7 +734,7 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <div class="footer-grid">
 <div>
 <div class="footer-logo">
-<img src="logo.png" alt="Academia logaRitmo">
+<img src="logo.png" alt="Academia Logaritmo">
 </div>
 </div>
 <div class="footer-contacto">
@@ -687,6 +767,47 @@ links.forEach(x => x.classList.remove('active'));
 l.classList.add('active');
 });
 });
+</script>
+
+<!-- BOTÓN FLOTANTE WHATSAPP -->
+<a href="https://wa.me/34684790506?text=Hola,%20me%20gustar%C3%ADa%20informaci%C3%B3n%20sobre%20los%20cursos%20de%20verano" class="wa-flotante" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp" title="Escríbenos por WhatsApp">
+<svg viewBox="0 0 24 24" width="30" height="30" fill="#fff" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.18 8.18 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.25 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg>
+</a>
+
+<!-- BURBUJA WHATSAPP (mensaje tipo chat) -->
+<div class="wa-popup" id="waPopup" role="dialog" aria-label="Mensaje de Academia Logaritmo por WhatsApp">
+<div class="wa-popup__header">
+<span class="wa-popup__avatar"><img src="favicon.png" alt="Academia Logaritmo"></span>
+<span class="wa-popup__meta">
+<span class="wa-popup__title">Academia Logaritmo</span>
+<span class="wa-popup__status" id="waStatus">en línea</span>
+</span>
+<button class="wa-popup__close" id="waClose" aria-label="Cerrar mensaje">&times;</button>
+</div>
+<div class="wa-popup__body" id="waBody">
+<div class="wa-typing" id="waTyping"><span></span><span></span><span></span></div>
+</div>
+<a class="wa-popup__cta" href="https://wa.me/34684790506?text=Hola,%20me%20gustar%C3%ADa%20informaci%C3%B3n%20sobre%20los%20cursos%20de%20verano" target="_blank" rel="noopener">Responder por WhatsApp</a>
+</div>
+<script>
+(function(){
+  var pop=document.getElementById('waPopup'); if(!pop) return;
+  try{ if(sessionStorage.getItem('wa_popup_closed')==='1') return; }catch(e){}
+  var status=document.getElementById('waStatus');
+  var body=document.getElementById('waBody');
+  var typing=document.getElementById('waTyping');
+  setTimeout(function(){ pop.classList.add('show'); if(status){ status.textContent='escribiendo…'; } }, 2500);
+  setTimeout(function(){
+    if(status){ status.textContent='en línea'; }
+    if(typing){ typing.parentNode && typing.remove(); }
+    var m=document.createElement('div');
+    m.className='wa-popup__msg';
+    m.innerHTML='¡Hola! 👋 Estamos aquí para resolverte cualquier duda.<span class="wa-popup__time">Ahora</span>';
+    body.appendChild(m);
+  }, 4300);
+  var c=document.getElementById('waClose');
+  if(c){ c.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); pop.classList.remove('show'); try{ sessionStorage.setItem('wa_popup_closed','1'); }catch(err){} }); }
+})();
 </script>
 
 <!-- AVISO DE COOKIES -->
