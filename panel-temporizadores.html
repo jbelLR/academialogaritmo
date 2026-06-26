@@ -205,6 +205,7 @@ var ultimaOk = 0;
 
 function hhmmToMin(s){ if(!s) return null; var p=String(s).split(':'); return (+p[0])*60+(+p[1]); }
 function pad(n){ return (n<10?'0':'')+n; }
+function hhmmToTodayMs(hhmm){ if(!hhmm) return null; var p=String(hhmm).split(':'); var d=new Date(); d.setHours(+p[0]||0,+p[1]||0,0,0); return d.getTime(); }
 function fmt(sec){
   if(sec<0) sec=0; sec=Math.floor(sec);
   var h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
@@ -239,18 +240,14 @@ function aplicar(lista){
     s.entrada = a.entrada || '';
     s.prevista = a.prevista || '';
     s.mode = s.prevista ? 'countdown' : 'countup';
-    var nowMin = ahoraServidorMin();
     if(s.mode==='countdown'){
-      s.baseRem = (hhmmToMin(s.prevista) - nowMin)*60;
-      var ent = hhmmToMin(s.entrada);
-      var total = (ent!=null) ? (hhmmToMin(s.prevista) - ent)*60 : s.baseRem;
-      s.totalSec = (total>0) ? total : Math.max(s.baseRem,1);
-      if(s.done && s.baseRem>2) s.done=false; // le ampliaron o volvio a fichar
+      s.targetMs = hhmmToTodayMs(s.prevista);              // hora de fin real (reloj local)
+      var entMs = hhmmToTodayMs(s.entrada);
+      var total = (entMs!=null) ? (s.targetMs - entMs)/1000 : null;
+      s.totalSec = (total && total>0) ? total : Math.max((s.targetMs-Date.now())/1000, 1);
     } else {
-      var ent2 = hhmmToMin(s.entrada);
-      s.baseEla = (ent2!=null ? (nowMin - ent2)*60 : 0);
+      s.startMs = hhmmToTodayMs(s.entrada) || Date.now();
     }
-    s.sync = performance.now();
   });
   // quitar los que ya no estan (han fichado salida)
   Object.keys(sesiones).forEach(function(ref){
@@ -264,15 +261,14 @@ function aplicar(lista){
 
 /* ---- tick local ---- */
 function tick(){
-  var d=new Date(Date.now()+offsetMs);
+  var d=new Date();
   elReloj.textContent = pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
-
+  var nowMs=Date.now();
   Object.keys(sesiones).forEach(function(ref){
     var s=sesiones[ref];
-    var dt=(performance.now()-s.sync)/1000;
     s.el.mesa.textContent = s.mesa;
     if(s.mode==='countdown'){
-      var rem = s.baseRem - dt;
+      var rem = (s.targetMs - nowMs)/1000;
       var frac = Math.max(0, Math.min(1, s.totalSec>0 ? rem/s.totalSec : 0));
       s.el.prog.style.strokeDashoffset = (CIRC*(1-frac)).toFixed(1);
       var cls='card run';
@@ -280,18 +276,16 @@ function tick(){
         cls='card done';
         s.el.disp.textContent='00:00';
         s.el.tag.textContent='¡Tiempo!';
-        if(!s.done){ s.done=true; beep(); }
-      } else if(rem<=AVISO_SEG){
-        cls='card warn';
-        s.el.disp.textContent=fmt(rem);
-        s.el.tag.textContent='Hasta las '+s.prevista;
+        if(!s.beeped){ s.beeped=true; beep(); }
       } else {
+        if(rem>2) s.beeped=false;
         s.el.disp.textContent=fmt(rem);
         s.el.tag.textContent='Hasta las '+s.prevista;
+        if(rem<=AVISO_SEG) cls='card warn';
       }
       s.el.root.className=cls;
     } else {
-      var ela = s.baseEla + dt;
+      var ela = (nowMs - s.startMs)/1000;
       s.el.prog.style.strokeDashoffset = '0';
       s.el.disp.textContent = fmt(ela);
       s.el.tag.textContent = 'Sin límite';
@@ -309,12 +303,6 @@ function poll(){
   window[cb]=function(res){
     resuelto=true;
     try{
-      if(res && res.ahora){
-        var sm=hhmmToMin(res.ahora)*60*1000;
-        var now=new Date();
-        var lm=now.getHours()*3600000+now.getMinutes()*60000+now.getSeconds()*1000;
-        offsetMs = sm - lm;
-      }
       aplicar((res && res.alumnos) ? res.alumnos : []);
       marcarConn(true);
     }catch(e){ marcarConn(false); }
