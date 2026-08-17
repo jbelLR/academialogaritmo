@@ -351,6 +351,18 @@ text-align: left;
 color: rgba(255,255,255,0.9);
 }
 .aviso-curso__gratis b { color: var(--amarillo); font-weight: 800; }
+.aviso-curso__cta { margin-bottom: 22px; }
+.aviso-curso__cta a {
+display: inline-block;
+background: var(--amarillo);
+color: var(--azul-oscuro);
+font-weight: 800;
+font-size: 0.98rem;
+padding: 12px 26px;
+border-radius: 999px;
+transition: transform .18s ease, box-shadow .18s ease;
+}
+.aviso-curso__cta a:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,.22); }
 .nota-asterisco {
 max-width: 600px;
 margin: 0 auto 50px;
@@ -654,9 +666,7 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <ul>
 <li><a href="#inicio" class="active">Inicio</a></li>
 <li><a href="#curso">Curso 2026/27</a></li>
-<li><a href="#informacion">Información</a></li>
-<li><a href="#simulador">Simulador</a></li>
-<li><a href="#materiales">Materiales</a></li>
+<li><a href="#informacion">Precios</a></li>
 </ul>
 </nav>
 <div class="contacto-header">
@@ -747,6 +757,7 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <span class="aviso-curso__badge">Curso 2026 / 27</span>
 <p class="aviso-curso__titular">Matrícula <strong>abierta</strong></p>
 <p class="aviso-curso__sub">Puedes incorporarte en cualquier momento del curso. Escríbenos y vemos juntos qué horario te encaja.</p>
+<div class="aviso-curso__cta"><a href="#simulador">Calcula tu precio &rsaquo;</a></div>
 <div class="aviso-curso__matricula">
 <div class="aviso-curso__precio"><span>Matrícula</span>29 €</div>
 <p class="aviso-curso__gratis"><b>Gratuita</b> para alumnos actuales y para quienes se matriculen antes de septiembre</p>
@@ -1161,7 +1172,7 @@ l.classList.add('active');
     var claves=Object.keys(sel).sort();
     if(!claves.length){
       elDet.innerHTML='<p class="sim-res__vacio">Marca en el calendario los d&iacute;as que vas a venir.<br>El precio aparecer&aacute; aqu&iacute;.</p>';
-      elCta.href='https://wa.me/34684790506?text='+encodeURIComponent('Hola, me gustaria informacion sobre las clases.');
+      elCta.href='https://wa.me/34684790506?text='+encodeURIComponent('Hola, me gustaría información sobre las clases.');
       return;
     }
     var html='', total=0, hayConsultar=false, txt=[];
@@ -1178,7 +1189,7 @@ l.classList.add('active');
         eur=num(r.total)+' &euro;';
         det=dias.length+' d&iacute;a'+(dias.length===1?'':'s')+' &middot; '+nh(horas)+' h &middot; bono de '+r.tramo.hMes+' h/mes ('+num(r.ph)+' &euro;/h)';
       }
-      txt.push(nomMes(k)+': '+dias.length+(dias.length===1?' dia, ':' dias, ')+nh(horas)+' h');
+      txt.push(nomMes(k)+': '+dias.length+(dias.length===1?' día, ':' días, ')+nh(horas)+' h');
       html+='<div class="sim-res__mes"><div class="sim-res__mes-top">'+
             '<span class="sim-res__mes-nom">'+nomMes(k)+'</span>'+
             '<span class="sim-res__mes-eur">'+eur+'</span></div>'+
@@ -1188,7 +1199,7 @@ l.classList.add('active');
           '<div class="sim-res__precio">'+num(total)+' &euro;'+(hayConsultar?' +':'')+'</div></div>';
     elDet.innerHTML=html;
     elCta.href='https://wa.me/34684790506?text='+encodeURIComponent(
-      'Hola! He usado el simulador de la web. '+txt.join(' / ')+'. Total orientativo: '+num(total)+' EUR. Me lo podeis confirmar?'
+      '¡Hola! He usado el simulador de precios de la web. '+txt.join(' / ')+'. Total orientativo: '+num(total)+' €. ¿Me lo podéis confirmar?'
     );
   }
 
@@ -1206,5 +1217,40 @@ l.classList.add('active');
 })();
 </script>
 
+
+<style>
+/* el aviso de cookies ocupa la franja inferior: se aparta el WhatsApp mientras esté visible */
+body.aviso-cookies-visible .wa-flotante { bottom: 118px; }
+body.aviso-cookies-visible .wa-popup { bottom: 190px; }
+@media (max-width: 600px){
+  body.aviso-cookies-visible .wa-flotante { bottom: 150px; }
+  body.aviso-cookies-visible .wa-popup { bottom: 216px; }
+}
+</style>
+<!-- AVISO DE COOKIES -->
+<div id="cookie-aviso" style="display:none; position:fixed; bottom:0; left:0; right:0; background:#112849; color:#fff; padding:18px 24px; box-shadow:0 -4px 20px rgba(0,0,0,0.25); z-index:9999; font-family:'Segoe UI',Tahoma,sans-serif; font-size:0.95rem;">
+  <div style="max-width:1100px; margin:0 auto; display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:14px; text-align:center;">
+    <span style="flex:1 1 300px; min-width:240px;">Esta web utiliza únicamente cookies y almacenamiento técnicos, necesarios para su funcionamiento. No usamos cookies de analítica ni de publicidad. Más información en nuestra <a href="politica-cookies.html" style="color:#f5b941; text-decoration:underline;">Política de cookies</a>.</span>
+    <button id="cookie-ok" style="background:#f5b941; color:#112849; border:none; padding:10px 24px; border-radius:4px; font-weight:700; cursor:pointer; font-size:0.95rem; font-family:inherit;">Entendido</button>
+  </div>
+</div>
+<script>
+(function(){
+  try{
+    if(!localStorage.getItem('aviso_cookies_ok')){
+      var b=document.getElementById('cookie-aviso');
+      if(b){
+        b.style.display='block';
+        document.body.classList.add('aviso-cookies-visible');
+        document.getElementById('cookie-ok').addEventListener('click',function(){
+          b.style.display='none';
+          document.body.classList.remove('aviso-cookies-visible');
+          try{ localStorage.setItem('aviso_cookies_ok','1'); }catch(e){}
+        });
+      }
+    }
+  }catch(e){}
+})();
+</script>
 </body>
 </html>
