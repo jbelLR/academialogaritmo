@@ -494,6 +494,45 @@ color: #d6e1ee;
 max-height: 500px;
 padding: 0 10px 22px;
 }
+/* ============ SIMULADOR DE PRECIOS ============ */
+.simulador { background: var(--gris-claro); padding: 70px 20px; }
+.simulador h2 { text-align: center; font-size: 3.5rem; color: var(--azul-oscuro); font-weight: 700; letter-spacing: 1px; }
+.simulador .sim-sub { text-align: center; font-size: 1.1rem; color: #4a5568; margin: 14px auto 42px; max-width: 620px; line-height: 1.65; }
+.sim-wrap { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 34px; max-width: 1000px; margin: 0 auto; align-items: start; }
+.sim-card { background: #fff; border-radius: 20px; padding: 28px; box-shadow: 0 10px 30px rgba(17,40,73,0.10); }
+.sim-label { font-size: 0.74rem; font-weight: 800; letter-spacing: 2.2px; text-transform: uppercase; color: #7d8ca1; margin-bottom: 12px; }
+.sim-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 26px; }
+.sim-pill { border: 2px solid #dde4ec; background: #fff; color: var(--azul-oscuro); font-weight: 700; font-size: 0.95rem; padding: 9px 17px; border-radius: 999px; cursor: pointer; transition: all .15s ease; font-family: inherit; }
+.sim-pill:hover { border-color: var(--amarillo); }
+.sim-pill.activa { background: var(--azul-oscuro); border-color: var(--azul-oscuro); color: #fff; }
+.sim-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.sim-nav__mes { font-size: 1.15rem; font-weight: 700; color: var(--azul-oscuro); text-transform: capitalize; }
+.sim-nav__btn { width: 38px; height: 38px; border-radius: 11px; border: 2px solid #dde4ec; background: #fff; cursor: pointer; font-size: 1.2rem; color: var(--azul-oscuro); line-height: 1; font-family: inherit; }
+.sim-nav__btn:hover { border-color: var(--amarillo); }
+.sim-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.sim-dow { text-align: center; font-size: 0.7rem; font-weight: 800; letter-spacing: 1px; color: #8b9bb0; padding-bottom: 6px; text-transform: uppercase; }
+.sim-dia { aspect-ratio: 1/1; border: 2px solid #e6ecf3; border-radius: 11px; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 700; color: var(--azul-oscuro); cursor: pointer; user-select: none; font-size: 0.95rem; transition: background .12s ease, border-color .12s ease, color .12s ease; font-family: inherit; padding: 0; }
+.sim-dia:hover:not(.sim-dia--off):not(.sim-dia--hueco) { border-color: var(--amarillo); }
+.sim-dia--off { background: #f1f4f8; color: #c4cedb; cursor: not-allowed; border-color: transparent; }
+.sim-dia--hueco { border: 0; background: transparent; cursor: default; }
+.sim-dia--sel { background: var(--azul-oscuro); border-color: var(--azul-oscuro); color: #fff; }
+.sim-dia__h { font-size: 0.6rem; font-weight: 700; color: var(--amarillo); line-height: 1; margin-top: 3px; }
+.sim-borrar { background: none; border: 0; color: #7d8ca1; font-size: 0.85rem; text-decoration: underline; cursor: pointer; margin-top: 18px; font-family: inherit; padding: 0; }
+.sim-borrar:hover { color: var(--azul-oscuro); }
+.sim-res { background: linear-gradient(135deg, var(--azul-oscuro) 0%, var(--azul-medio) 100%); color: #fff; border-radius: 20px; padding: 30px 28px; box-shadow: 0 14px 34px rgba(17,40,73,0.22); }
+.sim-res h3 { font-size: 0.74rem; font-weight: 800; letter-spacing: 2.2px; text-transform: uppercase; color: rgba(255,255,255,0.55); margin-bottom: 18px; }
+.sim-res__mes { padding: 13px 0; border-bottom: 1px solid rgba(255,255,255,0.12); }
+.sim-res__mes-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.sim-res__mes-nom { font-weight: 700; font-size: 1.02rem; text-transform: capitalize; }
+.sim-res__mes-eur { font-weight: 800; font-size: 1.15rem; color: var(--amarillo); white-space: nowrap; }
+.sim-res__mes-det { font-size: 0.83rem; color: rgba(255,255,255,0.6); margin-top: 4px; line-height: 1.45; }
+.sim-res__total { margin-top: 24px; text-align: center; }
+.sim-res__total small { display: block; font-size: 0.7rem; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.6); font-weight: 700; margin-bottom: 8px; }
+.sim-res__precio { font-size: 3rem; font-weight: 800; color: var(--amarillo); line-height: 1; }
+.sim-res__vacio { color: rgba(255,255,255,0.6); font-size: 0.95rem; line-height: 1.6; text-align: center; padding: 26px 0; }
+.sim-res__nota { font-size: 0.8rem; color: rgba(255,255,255,0.55); line-height: 1.55; margin-top: 16px; text-align: center; }
+.sim-res__cta { display: block; margin-top: 20px; background: #25D366; color: #fff; text-align: center; padding: 13px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; }
+.sim-res__cta:hover { background: #1ebe5b; }
 /* ============ FOOTER ============ */
 footer {
 background: var(--azul-oscuro);
@@ -590,6 +629,12 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 .card.azul, .card.medio, .card.negro { order: unset; }
 .precios h2 { font-size: 2.5rem; }
 .aviso-curso { padding: 30px 24px 28px; border-radius: 16px; }
+.simulador h2 { font-size: 2.5rem; }
+.sim-wrap { grid-template-columns: 1fr; gap: 22px; }
+.sim-card { padding: 20px 16px; }
+.sim-grid { gap: 4px; }
+.sim-dia { font-size: 0.88rem; border-radius: 9px; }
+.sim-pill { padding: 8px 13px; font-size: 0.88rem; }
 .aviso-curso__titular { font-size: 1.45rem; }
 .aviso-curso__matricula { gap: 18px; }
 .aviso-curso__gratis { text-align: center; max-width: 100%; font-size: 0.95rem; }
@@ -610,6 +655,7 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <li><a href="#inicio" class="active">Inicio</a></li>
 <li><a href="#curso">Curso 2026/27</a></li>
 <li><a href="#informacion">Información</a></li>
+<li><a href="#simulador">Simulador</a></li>
 <li><a href="#materiales">Materiales</a></li>
 </ul>
 </nav>
@@ -747,7 +793,7 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <div class="circulo">
 <div class="horas">4h/semana</div>
 <div class="mensual">(16 horas mensuales)</div>
-<div class="precio">179€/mes</div>
+<div class="precio">162,40€/mes</div>
 </div>
 </div>
 <div class="precio-item">
@@ -785,6 +831,31 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <h3>Clase privada para grupos e institutos</h3>
 <p style="margin-top:15px; color: #444;">Consultar precio y disponibilidad con el centro.</p>
 </div>
+</div>
+</div>
+</section>
+
+<!-- SIMULADOR DE PRECIOS -->
+<section class="simulador" id="simulador">
+<h2>Simulador de precios</h2>
+<p class="sim-sub">Marca en el calendario los días que vas a venir y cuántas horas cada día. El precio se calcula solo, con la misma tarifa de arriba.</p>
+<div class="sim-wrap">
+<div class="sim-card">
+<div class="sim-label">Horas por día</div>
+<div class="sim-pills" id="simPills"></div>
+<div class="sim-nav">
+<button class="sim-nav__btn" id="simPrev" type="button" aria-label="Mes anterior">&lsaquo;</button>
+<span class="sim-nav__mes" id="simMes"></span>
+<button class="sim-nav__btn" id="simNext" type="button" aria-label="Mes siguiente">&rsaquo;</button>
+</div>
+<div class="sim-grid" id="simGrid"></div>
+<button class="sim-borrar" id="simBorrar" type="button">Borrar todo y empezar de nuevo</button>
+</div>
+<div class="sim-res">
+<h3>Tu presupuesto</h3>
+<div id="simDetalle"></div>
+<a class="sim-res__cta" id="simCta" href="https://wa.me/34684790506" target="_blank" rel="noopener">Reservar por WhatsApp</a>
+<p class="sim-res__nota">Precio orientativo, calculado con la tarifa de bonos. La matrícula no está incluida. Escríbenos y lo cerramos contigo.</p>
 </div>
 </div>
 </section>
@@ -933,4 +1004,207 @@ l.classList.add('active');
     body.appendChild(m);
   }, 4300);
   var c=document.getElementById('waClose');
-  if(c){ c.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); pop.classLi
+  if(c){ c.addEventListener('click', function(e){
+    e.preventDefault(); e.stopPropagation();
+    pop.classList.remove('show');
+    try{ sessionStorage.setItem('wa_popup_closed','1'); }catch(err){}
+  }); }
+})();
+</script>
+
+<!-- SIMULADOR DE PRECIOS -->
+<script>
+(function(){
+  var grid=document.getElementById('simGrid');
+  if(!grid) return;
+
+  // Tarifa oficial: el bono mas pequeno que cubra las horas manda el precio/hora
+  var TRAMOS=[
+    {hMes:4,  precio:49},
+    {hMes:8,  precio:89},
+    {hMes:12, precio:129},
+    {hMes:16, precio:162.40},
+    {hMes:20, precio:199},
+    {hMes:24, precio:235},
+    {hMes:28, precio:265},
+    {hMes:32, precio:285},
+    {hMes:40, precio:335}
+  ];
+  var MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  var DOW=['L','M','X','J','V','S','D'];
+  var OPCIONES=[1,1.5,2,3,4];
+
+  var horasActivas=2;
+  var sel={};                                  // 'YYYY-MM' -> { dia: horas }
+  var hoy=new Date();
+  var ver=new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+
+  var elPills=document.getElementById('simPills');
+  var elMes=document.getElementById('simMes');
+  var elDet=document.getElementById('simDetalle');
+  var elCta=document.getElementById('simCta');
+
+  function num(n){ return n.toLocaleString('es-ES',{minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function nh(n){ return n.toLocaleString('es-ES',{maximumFractionDigits:1}); }
+  function claveMes(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+  function nomMes(k){ var p=k.split('-'); return MESES[parseInt(p[1],10)-1]+' '+p[0]; }
+
+  function calcula(horas){
+    if(horas<=0) return null;
+    for(var i=0;i<TRAMOS.length;i++){
+      if(TRAMOS[i].hMes>=horas){
+        var ph=TRAMOS[i].precio/TRAMOS[i].hMes;
+        return { total: horas*ph, ph: ph, tramo: TRAMOS[i] };
+      }
+    }
+    return { consultar:true };
+  }
+
+  // ---------- pills de horas ----------
+  OPCIONES.forEach(function(h){
+    var b=document.createElement('button');
+    b.type='button';
+    b.className='sim-pill'+(h===horasActivas?' activa':'');
+    b.textContent = nh(h)+(h===1?' hora':' horas');
+    b.addEventListener('click', function(){
+      horasActivas=h;
+      Array.prototype.forEach.call(elPills.children,function(x){ x.classList.remove('activa'); });
+      b.classList.add('activa');
+    });
+    elPills.appendChild(b);
+  });
+
+  // ---------- calendario ----------
+  var arrastrando=false, modo=null;
+
+  function pintaDia(btn, k, d){
+    var h = sel[k] && sel[k][d];
+    btn.classList.toggle('sim-dia--sel', !!h);
+    btn.innerHTML='<span>'+d+'</span>'+(h?'<span class="sim-dia__h">'+nh(h)+' h</span>':'');
+  }
+
+  function aplica(btn, k, d){
+    if(modo==='poner'){
+      if(!sel[k]) sel[k]={};
+      if(sel[k][d]===horasActivas) return;
+      sel[k][d]=horasActivas;
+    }else{
+      if(!sel[k] || !sel[k][d]) return;
+      delete sel[k][d];
+      if(!Object.keys(sel[k]).length) delete sel[k];
+    }
+    pintaDia(btn,k,d);
+    resumen();
+  }
+
+  function pintaMes(){
+    var k=claveMes(ver);
+    elMes.textContent = MESES[ver.getMonth()]+' '+ver.getFullYear();
+    grid.innerHTML='';
+    DOW.forEach(function(d){
+      var c=document.createElement('div'); c.className='sim-dow'; c.textContent=d; grid.appendChild(c);
+    });
+    var primero=new Date(ver.getFullYear(), ver.getMonth(), 1);
+    var hueco=(primero.getDay()+6)%7;                              // lunes primero
+    var dias=new Date(ver.getFullYear(), ver.getMonth()+1, 0).getDate();
+    for(var i=0;i<hueco;i++){
+      var v=document.createElement('div'); v.className='sim-dia sim-dia--hueco'; grid.appendChild(v);
+    }
+    for(var d=1; d<=dias; d++){
+      (function(d){
+        var f=new Date(ver.getFullYear(), ver.getMonth(), d);
+        var finde=(f.getDay()===0 || f.getDay()===6);
+        var b=document.createElement('button');
+        b.type='button';
+        b.className='sim-dia'+(finde?' sim-dia--off':'');
+        b.setAttribute('data-dia', d);
+        pintaDia(b,k,d);
+        if(finde){ b.disabled=true; }
+        else{
+          b.addEventListener('mousedown', function(ev){
+            ev.preventDefault();
+            arrastrando=true;
+            modo = (sel[k] && sel[k][d]) ? 'quitar' : 'poner';
+            aplica(b,k,d);
+          });
+          b.addEventListener('mouseenter', function(){ if(arrastrando) aplica(b,k,d); });
+          b.addEventListener('click', function(ev){ ev.preventDefault(); });
+          b.addEventListener('touchstart', function(ev){
+            ev.preventDefault();
+            modo = (sel[k] && sel[k][d]) ? 'quitar' : 'poner';
+            aplica(b,k,d);
+          }, {passive:false});
+        }
+        grid.appendChild(b);
+      })(d);
+    }
+    resumen();
+  }
+
+  // arrastre con el dedo
+  grid.addEventListener('touchmove', function(ev){
+    var t=ev.touches[0]; if(!t) return;
+    var el=document.elementFromPoint(t.clientX, t.clientY);
+    if(!el) return;
+    var btn=el.closest ? el.closest('.sim-dia') : null;
+    if(btn && !btn.disabled && !btn.classList.contains('sim-dia--hueco')){
+      ev.preventDefault();
+      aplica(btn, claveMes(ver), parseInt(btn.getAttribute('data-dia'),10));
+    }
+  }, {passive:false});
+
+  document.addEventListener('mouseup', function(){ arrastrando=false; });
+  grid.addEventListener('dragstart', function(e){ e.preventDefault(); });
+
+  // ---------- resumen ----------
+  function resumen(){
+    var claves=Object.keys(sel).sort();
+    if(!claves.length){
+      elDet.innerHTML='<p class="sim-res__vacio">Marca en el calendario los d&iacute;as que vas a venir.<br>El precio aparecer&aacute; aqu&iacute;.</p>';
+      elCta.href='https://wa.me/34684790506?text='+encodeURIComponent('Hola, me gustaria informacion sobre las clases.');
+      return;
+    }
+    var html='', total=0, hayConsultar=false, txt=[];
+    claves.forEach(function(k){
+      var dias=Object.keys(sel[k]);
+      var horas=dias.reduce(function(a,d){ return a+sel[k][d]; },0);
+      var r=calcula(horas), eur, det;
+      if(r && r.consultar){
+        hayConsultar=true;
+        eur='Consultar';
+        det=dias.length+' d&iacute;a'+(dias.length===1?'':'s')+' &middot; '+nh(horas)+' h &mdash; por encima del bono de 40 h/mes';
+      }else{
+        total+=r.total;
+        eur=num(r.total)+' &euro;';
+        det=dias.length+' d&iacute;a'+(dias.length===1?'':'s')+' &middot; '+nh(horas)+' h &middot; bono de '+r.tramo.hMes+' h/mes ('+num(r.ph)+' &euro;/h)';
+      }
+      txt.push(nomMes(k)+': '+dias.length+(dias.length===1?' dia, ':' dias, ')+nh(horas)+' h');
+      html+='<div class="sim-res__mes"><div class="sim-res__mes-top">'+
+            '<span class="sim-res__mes-nom">'+nomMes(k)+'</span>'+
+            '<span class="sim-res__mes-eur">'+eur+'</span></div>'+
+            '<div class="sim-res__mes-det">'+det+'</div></div>';
+    });
+    html+='<div class="sim-res__total"><small>'+(claves.length>1?'Total':'A pagar')+'</small>'+
+          '<div class="sim-res__precio">'+num(total)+' &euro;'+(hayConsultar?' +':'')+'</div></div>';
+    elDet.innerHTML=html;
+    elCta.href='https://wa.me/34684790506?text='+encodeURIComponent(
+      'Hola! He usado el simulador de la web. '+txt.join(' / ')+'. Total orientativo: '+num(total)+' EUR. Me lo podeis confirmar?'
+    );
+  }
+
+  document.getElementById('simPrev').addEventListener('click', function(){
+    ver=new Date(ver.getFullYear(), ver.getMonth()-1, 1); pintaMes();
+  });
+  document.getElementById('simNext').addEventListener('click', function(){
+    ver=new Date(ver.getFullYear(), ver.getMonth()+1, 1); pintaMes();
+  });
+  document.getElementById('simBorrar').addEventListener('click', function(){
+    sel={}; pintaMes();
+  });
+
+  pintaMes();
+})();
+</script>
+
+</body>
+</html>
