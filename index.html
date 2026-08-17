@@ -118,7 +118,7 @@ background: var(--gris-claro);
 }
 .hero-img {
 background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.1)),
-url('https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=900') center/cover;
+url('dibujo-tecnico.jpg') center/cover;
 min-height: 480px;
 }
 .hero-text {
@@ -163,8 +163,8 @@ max-width: 480px;
 box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 .caja-amarilla p { margin-bottom: 15px; }
-.montana {
-background: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900') center/cover;
+.foto-aula {
+background: url('aula.jpg') center/cover;
 min-height: 420px;
 }
 /* ============ FRASE ============ */
@@ -270,16 +270,87 @@ font-size: 1.4rem;
 color: var(--azul-oscuro);
 margin-bottom: 30px;
 }
-.matricula {
-background: #fff;
-border: 1px solid #ddd;
-padding: 18px;
-max-width: 700px;
-margin: 0 auto 15px;
-font-weight: 700;
-color: var(--azul-oscuro);
-font-size: 1.05rem;
+/* ---- Aviso de curso (matrícula) ---- */
+.aviso-curso {
+position: relative;
+overflow: hidden;
+max-width: 760px;
+margin: 0 auto 35px;
+padding: 38px 42px 34px;
+border-radius: 20px;
+background: linear-gradient(135deg, var(--azul-oscuro) 0%, var(--azul-medio) 100%);
+color: #fff;
+box-shadow: 0 16px 38px rgba(17,40,73,0.22);
 }
+.aviso-curso::after {
+content: '';
+position: absolute;
+top: -80px; right: -80px;
+width: 260px; height: 260px;
+border-radius: 50%;
+background: radial-gradient(circle, rgba(245,185,65,0.22) 0%, rgba(245,185,65,0) 70%);
+pointer-events: none;
+}
+.aviso-curso > * { position: relative; z-index: 1; }
+.aviso-curso__badge {
+display: inline-block;
+background: var(--amarillo);
+color: var(--azul-oscuro);
+font-size: 0.75rem;
+font-weight: 800;
+letter-spacing: 2.5px;
+text-transform: uppercase;
+padding: 7px 18px;
+border-radius: 999px;
+margin-bottom: 18px;
+}
+.aviso-curso__titular {
+font-size: 1.9rem;
+font-weight: 700;
+line-height: 1.25;
+margin-bottom: 8px;
+}
+.aviso-curso__titular strong { color: var(--amarillo); }
+.aviso-curso__sub {
+font-size: 1rem;
+line-height: 1.6;
+color: rgba(255,255,255,0.72);
+max-width: 520px;
+margin: 0 auto 26px;
+}
+.aviso-curso__matricula {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 28px;
+flex-wrap: wrap;
+padding-top: 24px;
+border-top: 1px solid rgba(255,255,255,0.16);
+}
+.aviso-curso__precio {
+flex-shrink: 0;
+line-height: 1;
+font-size: 2.4rem;
+font-weight: 800;
+color: var(--amarillo);
+}
+.aviso-curso__precio span {
+display: block;
+margin-bottom: 7px;
+font-size: 0.72rem;
+font-weight: 700;
+letter-spacing: 2.5px;
+text-transform: uppercase;
+color: rgba(255,255,255,0.6);
+}
+.aviso-curso__gratis {
+max-width: 340px;
+font-size: 1rem;
+line-height: 1.55;
+text-align: left;
+color: rgba(255,255,255,0.9);
+}
+.aviso-curso__gratis b { color: var(--amarillo); font-weight: 800; }
 .nota-asterisco {
 max-width: 600px;
 margin: 0 auto 50px;
@@ -491,12 +562,16 @@ font-size: 0.95rem;
 header { padding: 12px 20px; flex-direction: column; gap: 12px; }
 nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 .hero, .seccion-mision, .footer-grid { grid-template-columns: 1fr; }
-.hero-img, .montana { min-height: 280px; }
+.hero-img, .foto-aula { min-height: 280px; }
 .hero-text { padding: 50px 30px; }
 .hero-text h1 { font-size: 1.8rem; }
 .cards { grid-template-columns: 1fr; }
 .card.azul, .card.medio, .card.negro { order: unset; }
 .precios h2 { font-size: 2.5rem; }
+.aviso-curso { padding: 30px 24px 28px; border-radius: 16px; }
+.aviso-curso__titular { font-size: 1.45rem; }
+.aviso-curso__matricula { gap: 18px; }
+.aviso-curso__gratis { text-align: center; max-width: 100%; font-size: 0.95rem; }
 .precios-grid { grid-template-columns: 1fr; }
 .privadas-grid { grid-template-columns: 1fr; }
 .caja-amarilla-wrap { padding: 30px; }
@@ -512,7 +587,7 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <nav>
 <ul>
 <li><a href="#inicio" class="active">Inicio</a></li>
-<li><a href="#curso">Curso 2025/26</a></li>
+<li><a href="#curso">Curso 2026/27</a></li>
 <li><a href="#informacion">Información</a></li>
 <li><a href="#materiales">Materiales</a></li>
 </ul>
@@ -543,7 +618,7 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <p>Aquí sabemos que estudiar también tiene su propio ritmo. Para nosotros es el tuyo.</p>
 </div>
 </div>
-<div class="montana"></div>
+<div class="foto-aula"></div>
 </section>
 
 <!-- FRASE -->
@@ -601,8 +676,15 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <h2>Precios de nuestras clases</h2>
 <p class="subtitulo">Asignaturas ciencias*</p>
 <p class="sin-permanencia">Sin permanencia</p>
-<div class="matricula">🗓️ Nuevo curso: arrancamos el <strong>17 de agosto</strong></div>
-<div class="matricula">Matrícula: 39 € — <strong>gratuita</strong> para alumnos actuales y para quienes se matriculen antes de septiembre</div>
+<div class="aviso-curso">
+<span class="aviso-curso__badge">Curso 2026 / 27</span>
+<p class="aviso-curso__titular">Matrícula <strong>abierta</strong></p>
+<p class="aviso-curso__sub">Puedes incorporarte en cualquier momento del curso. Escríbenos y vemos juntos qué horario te encaja.</p>
+<div class="aviso-curso__matricula">
+<div class="aviso-curso__precio"><span>Matrícula</span>29 €</div>
+<p class="aviso-curso__gratis"><b>Gratuita</b> para alumnos actuales y para quienes se matriculen antes de septiembre</p>
+</div>
+</div>
 <p class="nota-asterisco">*Asignaturas de letras, artes, humanidades y música <b>consultar</b> con el centro <u>precio y disponibilidad</u></p>
 <div class="precios-grid">
 <div class="precio-item">
@@ -811,7 +893,7 @@ l.classList.add('active');
     if(typing){ typing.parentNode && typing.remove(); }
     var m=document.createElement('div');
     m.className='wa-popup__msg';
-    m.innerHTML='¡Hola! 👋 Reserva ya tus clases para volver el 17 de agosto a full 💪 Ideal para quienes quieren llegar a septiembre con las bases repasadas y sin agobios. ¿Te informamos?<span class="wa-popup__time">Ahora</span>';
+    m.innerHTML='¡Hola! 👋 Dime qué asignatura hay que reforzar y te cuento qué horarios tengo libres 💪 Sin compromiso. ¿Te informamos?<span class="wa-popup__time">Ahora</span>';
     body.appendChild(m);
   }, 4300);
   var c=document.getElementById('waClose');
