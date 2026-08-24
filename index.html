@@ -84,31 +84,18 @@ line-height: 1;
 .logo .academia { font-size: 0.9rem; color: #fff; display: block; }
 .logo .nombre { color: var(--amarillo); }
 .logo .nombre .blanco { color: #fff; }
-nav ul {
-list-style: none;
-display: flex;
-gap: 35px;
-}
-nav a {
-color: #fff;
-font-size: 1.05rem;
-padding: 8px 14px;
-border-radius: 4px;
-transition: background 0.25s;
-}
-nav a:hover, nav a.active {
-background: #fff;
-color: var(--azul-oscuro);
-}
-.contacto-header {
-text-align: right;
-font-size: 0.9rem;
-}
-.contacto-header a {
-color: var(--amarillo);
-text-decoration: underline;
-font-weight: 600;
-}
+nav ul { list-style: none; display: flex; gap: 30px; margin: 0; padding: 0; }
+nav a { color: #fff; font-size: 0.82rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; padding: 6px 2px; position: relative; transition: color .2s ease; }
+nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 2px; background: var(--amarillo); transform: scaleX(0); transform-origin: left; transition: transform .2s ease; }
+nav a:hover, nav a.active { background: transparent; color: var(--amarillo); }
+nav a:hover::after, nav a.active::after { transform: scaleX(1); }
+.header-cta { background: var(--amarillo); color: var(--azul-oscuro); font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; padding: 11px 22px; border-radius: 999px; text-decoration: none; white-space: nowrap; transition: transform .2s ease, box-shadow .2s ease; }
+.header-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.22); }
+.footer-credito { margin-top: 14px; font-size: 0.82rem; color: rgba(255,255,255,0.55); display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.footer-credito a { color: rgba(255,255,255,0.72); text-decoration: none; display: inline-flex; align-items: center; gap: 5px; margin: 0; transition: color .2s ease; }
+.footer-credito a:hover { color: var(--amarillo); }
+.footer-credito svg { width: 15px; height: 15px; fill: currentColor; }
+.footer-credito .sep { opacity: 0.45; }
 /* ============ HERO ============ */
 .hero {
 display: grid;
@@ -475,6 +462,14 @@ margin: 0 auto;
 .resenas__nav.prev { left: -10px; } .resenas__nav.next { right: -10px; }
 @media (max-width: 900px){ .resena { flex-basis: calc((100% - 22px) / 2); } .resenas h2 { font-size: 2rem; } }
 @media (max-width: 640px){ .resena { flex-basis: 100%; } .resenas__nav { display: none; } }
+.redes-cta { text-align: center; margin-top: 44px; }
+.redes-cta h3 { color: var(--azul-oscuro); font-size: 1.2rem; margin-bottom: 14px; font-weight: 800; }
+.redes-cta__iconos { display: flex; gap: 14px; justify-content: center; }
+.redes-cta__iconos a { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; background: var(--azul-oscuro); transition: background .2s ease, transform .2s ease; }
+.redes-cta__iconos a:hover, .redes-cta__iconos a:focus-visible { background: var(--amarillo); transform: translateY(-3px); }
+.redes-cta__iconos svg { width: 25px; height: 25px; fill: #fff; transition: fill .2s ease; }
+.redes-cta__iconos a:hover svg, .redes-cta__iconos a:focus-visible svg { fill: var(--azul-oscuro); }
+.redes-cta__handle { display: block; margin-top: 13px; font-size: 0.9rem; color: #5a6b7a; }
 .faq {
 background: var(--azul-oscuro);
 color: #fff;
@@ -686,14 +681,13 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <nav>
 <ul>
 <li><a href="#inicio" class="active">Inicio</a></li>
-<li><a href="#curso">Curso 2026/27</a></li>
 <li><a href="#informacion">Precios</a></li>
+<li><a href="#curso">Método</a></li>
+<li><a href="#opiniones">Opiniones</a></li>
+<li><a href="#contacto">Contacto</a></li>
 </ul>
 </nav>
-<div class="contacto-header">
-<div>(+34) <a href="tel:+34684790506">684 79 05 06</a></div>
-<div>Fermín Caballero, 38, Madrid</div>
-</div>
+<a class="header-cta" href="tel:+34684790506">Contáctanos</a>
 </header>
 
 <!-- HERO -->
@@ -917,6 +911,15 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 </div>
 <button class="resenas__nav next" type="button" aria-label="Siguiente" id="resNext">&rsaquo;</button>
 </div>
+<div class="redes-cta">
+<h3>Síguenos y no te pierdas nada</h3>
+<div class="redes-cta__iconos">
+<a href="https://www.instagram.com/academia_logaritmo" target="_blank" rel="noopener" aria-label="Instagram de Academia Logaritmo" title="Instagram · @academia_logaritmo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C8.74 0 8.333.015 7.053.072 5.775.132 4.905.333 4.14.63c-.789.306-1.459.717-2.126 1.384S.935 3.35.63 4.14C.333 4.905.131 5.775.072 7.053.012 8.333 0 8.74 0 12s.015 3.667.072 4.947c.06 1.277.261 2.148.558 2.913.306.788.717 1.459 1.384 2.126.667.666 1.336 1.079 2.126 1.384.766.296 1.636.499 2.913.558C8.333 23.988 8.74 24 12 24s3.667-.015 4.947-.072c1.277-.06 2.148-.262 2.913-.558.788-.306 1.459-.718 2.126-1.384.666-.667 1.079-1.335 1.384-2.126.296-.765.499-1.636.558-2.913.06-1.28.072-1.687.072-4.947s-.015-3.667-.072-4.947c-.06-1.277-.262-2.149-.558-2.913-.306-.789-.718-1.459-1.384-2.126C21.319 1.347 20.651.935 19.86.63c-.765-.297-1.636-.499-2.913-.558C15.667.012 15.26 0 12 0zm0 2.16c3.203 0 3.585.016 4.85.071 1.17.055 1.805.249 2.227.415.562.217.96.477 1.382.9.419.418.679.816.895 1.378.164.42.36 1.065.416 2.235.056 1.265.07 1.646.07 4.849 0 3.204-.015 3.586-.074 4.85-.061 1.17-.256 1.805-.421 2.227-.224.562-.479.96-.899 1.382-.419.419-.824.679-1.38.895-.42.164-1.065.36-2.235.416-1.274.056-1.649.07-4.859.07-3.211 0-3.586-.015-4.859-.074-1.171-.061-1.816-.256-2.236-.421-.569-.224-.96-.479-1.379-.899-.421-.419-.69-.824-.9-1.38-.165-.42-.359-1.065-.42-2.235-.045-1.26-.061-1.649-.061-4.844 0-3.196.016-3.586.061-4.861.061-1.17.255-1.814.42-2.234.21-.57.479-.96.9-1.381.419-.419.81-.689 1.379-.898.42-.166 1.051-.361 2.221-.421 1.275-.045 1.65-.06 4.859-.06l.045.03zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4-1.791 4-4 4zm7.846-10.405c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793-.001 1.44.645 1.44 1.439z"/></svg></a>
+<a href="https://www.tiktok.com/@academialogaritmo_" target="_blank" rel="noopener" aria-label="TikTok de Academia Logaritmo" title="TikTok · @academialogaritmo_"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></a>
+<a href="https://www.youtube.com/@academia_logaritmo" target="_blank" rel="noopener" aria-label="YouTube de Academia Logaritmo" title="YouTube · @academia_logaritmo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+</div>
+<span class="redes-cta__handle">Instagram y YouTube: @academia_logaritmo · TikTok: @academialogaritmo_</span>
+</div>
 <script>
 (function(){
   var track=document.getElementById('resTrack');
@@ -1012,7 +1015,7 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <span class="footer-social__handle">@academia_logaritmo · TikTok: @academialogaritmo_</span>
 </div>
 </div>
-<div class="footer-contacto">
+<div class="footer-contacto" id="contacto">
 <h4>¿Dónde encontrarnos?</h4>
 <p>Calle Fermín Caballero 38</p>
 <p>28034 Madrid</p>
@@ -1024,6 +1027,7 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <a href="aviso-legal.html">Aviso legal</a>
 <a href="politica-privacidad.html">Política de privacidad</a>
 <a href="politica-cookies.html">Política de cookies</a>
+<p class="footer-credito"><a href="https://github.com" target="_blank" rel="noopener" title="Alojada en GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> GitHub</a><span class="sep">&middot;</span><a href="https://claude.ai" target="_blank" rel="noopener" title="Hecha con Claude">&#10022; Claude</a><span class="sep">&middot;</span><span>&copy; 2026 Academia logaRitmo</span></p>
 </div>
 </footer>
 
