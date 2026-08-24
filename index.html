@@ -540,11 +540,14 @@ padding: 0 10px 22px;
 .sim-res__mes-det { font-size: 0.83rem; color: rgba(255,255,255,0.6); margin-top: 4px; line-height: 1.45; }
 .sim-res__total { margin-top: 24px; text-align: center; }
 .sim-res__total small { display: block; font-size: 0.7rem; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.6); font-weight: 700; margin-bottom: 8px; }
-.sim-res__precio { font-size: 3rem; font-weight: 800; color: var(--amarillo); line-height: 1; }
+.sim-res__precio { font-size: 3.6rem; font-weight: 800; color: var(--amarillo); line-height: 1; }
 .sim-res__vacio { color: rgba(255,255,255,0.6); font-size: 0.95rem; line-height: 1.6; text-align: center; padding: 26px 0; }
 .sim-res__nota { font-size: 0.8rem; color: rgba(255,255,255,0.55); line-height: 1.55; margin-top: 16px; text-align: center; }
 .sim-res__cta { display: block; margin-top: 20px; background: #25D366; color: #fff; text-align: center; padding: 13px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; }
 .sim-res__cta:hover { background: #1ebe5b; }
+.sim-res__ventajas { list-style: none; margin: 18px 0 2px; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.sim-res__ventajas li { font-size: 0.9rem; color: rgba(255,255,255,0.92); padding-left: 24px; position: relative; }
+.sim-res__ventajas li::before { content: "\2713"; position: absolute; left: 0; color: var(--amarillo); font-weight: 800; }
 /* ============ FOOTER ============ */
 footer {
 background: var(--azul-oscuro);
@@ -804,7 +807,7 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <div class="circulo">
 <div class="horas">4h/semana</div>
 <div class="mensual">(16 horas mensuales)</div>
-<div class="precio">162,40€/mes</div>
+<div class="precio">159€/mes</div>
 </div>
 </div>
 <div class="precio-item">
@@ -848,8 +851,8 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 
 <!-- SIMULADOR DE PRECIOS -->
 <section class="simulador" id="simulador">
-<h2>Simulador de precios</h2>
-<p class="sim-sub">Marca en el calendario los días que vas a venir y cuántas horas cada día. El precio se calcula solo, con la misma tarifa de arriba.</p>
+<h2>Calcula cuánto pagarías al mes</h2>
+<p class="sim-sub">Elige los días y las horas que necesitas y te mostramos tu precio mensual.</p>
 <div class="sim-wrap">
 <div class="sim-card">
 <div class="sim-label">Horas por día</div>
@@ -863,10 +866,16 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <button class="sim-borrar" id="simBorrar" type="button">Borrar todo y empezar de nuevo</button>
 </div>
 <div class="sim-res">
-<h3>Tu presupuesto</h3>
+<h3>Tu plan</h3>
 <div id="simDetalle"></div>
-<a class="sim-res__cta" id="simCta" href="https://wa.me/34684790506" target="_blank" rel="noopener">Reservar por WhatsApp</a>
-<p class="sim-res__nota">Precio orientativo, calculado con la tarifa de bonos. La matrícula no está incluida. Escríbenos y lo cerramos contigo.</p>
+<ul class="sim-res__ventajas">
+<li>Matrícula gratuita en septiembre</li>
+<li>Sin permanencia</li>
+<li>Puedes incorporarte en cualquier momento</li>
+<li>Material complementario incluido</li>
+</ul>
+<a class="sim-res__cta" id="simCta" href="https://wa.me/34684790506" target="_blank" rel="noopener">Quiero este horario</a>
+<p class="sim-res__nota">Matrícula gratuita todo septiembre y para antiguos alumnos. El precio final está sujeto a disponibilidad del horario elegido.</p>
 </div>
 </div>
 </section>
@@ -1034,7 +1043,7 @@ l.classList.add('active');
     {hMes:4,  precio:49},
     {hMes:8,  precio:89},
     {hMes:12, precio:129},
-    {hMes:16, precio:162.40},
+    {hMes:16, precio:159},
     {hMes:20, precio:199},
     {hMes:24, precio:235},
     {hMes:28, precio:265},
@@ -1183,11 +1192,11 @@ l.classList.add('active');
       if(r && r.consultar){
         hayConsultar=true;
         eur='Consultar';
-        det=dias.length+' d&iacute;a'+(dias.length===1?'':'s')+' &middot; '+nh(horas)+' h &mdash; por encima del bono de 40 h/mes';
+        det=dias.length+' d&iacute;a'+(dias.length===1?'':'s')+' &middot; '+nh(horas)+' h &mdash; por encima de las 40 h/mes';
       }else{
         total+=r.total;
         eur=num(r.total)+' &euro;';
-        det=dias.length+' d&iacute;a'+(dias.length===1?'':'s')+' &middot; '+nh(horas)+' h &middot; bono de '+r.tramo.hMes+' h/mes ('+num(r.ph)+' &euro;/h)';
+        det=dias.length+' d&iacute;a'+(dias.length===1?'':'s')+' &middot; '+nh(horas)+' h &middot; tarifa mensual de '+r.tramo.hMes+' h/mes ('+num(r.ph)+' &euro;/h)';
       }
       txt.push(nomMes(k)+': '+dias.length+(dias.length===1?' día, ':' días, ')+nh(horas)+' h');
       html+='<div class="sim-res__mes"><div class="sim-res__mes-top">'+
@@ -1199,7 +1208,7 @@ l.classList.add('active');
           '<div class="sim-res__precio">'+num(total)+' &euro;'+(hayConsultar?' +':'')+'</div></div>';
     elDet.innerHTML=html;
     elCta.href='https://wa.me/34684790506?text='+encodeURIComponent(
-      '¡Hola! He usado el simulador de precios de la web. '+txt.join(' / ')+'. Total orientativo: '+num(total)+' €. ¿Me lo podéis confirmar?'
+      '¡Hola! He calculado mi plan en la web: '+txt.join(' / ')+'. Precio: '+num(total)+' €. ¿Tenéis disponibilidad en ese horario?'
     );
   }
 
