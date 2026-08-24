@@ -457,6 +457,24 @@ margin: 0 auto;
 .circulo-pequeno .horas { font-size: 1.4rem; color: var(--azul-oscuro); }
 .circulo-pequeno .precio { font-size: 1.4rem; margin-top: 8px; color: var(--azul-oscuro); }
 /* ============ FAQ ============ */
+.resenas { background: var(--gris-claro); padding: 70px 40px; }
+.resenas h2 { text-align: center; color: var(--azul-oscuro); font-size: 2.5rem; margin-bottom: 6px; }
+.resenas__sub { text-align: center; color: #4a5568; margin: 0 auto 40px; font-size: 1.05rem; max-width: 620px; }
+.resenas__carru { position: relative; max-width: 1120px; margin: 0 auto; }
+.resenas__track { display: flex; gap: 22px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 6px 4px 16px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.resenas__track::-webkit-scrollbar { display: none; }
+.resena { flex: 0 0 calc((100% - 44px) / 3); scroll-snap-align: start; background: #fff; border-radius: 16px; padding: 22px 22px 18px; box-shadow: 0 6px 20px rgba(17,40,73,0.08); display: flex; flex-direction: column; }
+.resena__stars { color: var(--amarillo); font-size: 1.05rem; letter-spacing: 2px; margin-bottom: 10px; }
+.resena__texto { color: #2d3748; line-height: 1.6; font-size: 0.97rem; flex: 1; }
+.resena__pie { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; gap: 10px; }
+.resena__autor { font-weight: 700; color: var(--azul-oscuro); font-size: 0.95rem; }
+.resena__badge { font-size: 0.72rem; color: #5a6b7a; white-space: nowrap; display: inline-flex; align-items: center; gap: 5px; font-weight: 600; }
+.resena__badge .g b:nth-child(1){color:#4285F4}.resena__badge .g b:nth-child(2){color:#EA4335}.resena__badge .g b:nth-child(3){color:#FBBC05}.resena__badge .g b:nth-child(4){color:#4285F4}.resena__badge .g b:nth-child(5){color:#34A853}.resena__badge .g b:nth-child(6){color:#EA4335}
+.resenas__nav { position: absolute; top: 50%; transform: translateY(-50%); z-index: 3; width: 46px; height: 46px; border-radius: 50%; border: 0; background: #fff; box-shadow: 0 4px 16px rgba(17,40,73,0.20); color: var(--azul-oscuro); font-size: 1.7rem; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.resenas__nav:hover { background: var(--amarillo); }
+.resenas__nav.prev { left: -10px; } .resenas__nav.next { right: -10px; }
+@media (max-width: 900px){ .resena { flex-basis: calc((100% - 22px) / 2); } .resenas h2 { font-size: 2rem; } }
+@media (max-width: 640px){ .resena { flex-basis: 100%; } .resenas__nav { display: none; } }
 .faq {
 background: var(--azul-oscuro);
 color: #fff;
@@ -880,6 +898,45 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 </div>
 </section>
 
+<!-- OPINIONES -->
+<section class="resenas" id="opiniones">
+<h2>Lo que dicen las familias</h2>
+<p class="resenas__sub">Opiniones reales de alumnos y familias en Google.</p>
+<div class="resenas__carru">
+<button class="resenas__nav prev" type="button" aria-label="Anterior" id="resPrev">&lsaquo;</button>
+<div class="resenas__track" id="resTrack">
+<div class="resena"><div class="resena__stars">★★★★★</div><p class="resena__texto">“Genial profesor. Tuve clases de dibujo técnico y física con él durante 2º de bachillerato y me ayudaron muchísimo. Explica todo de forma clara, con paciencia, y hace que todo se entienda mucho mejor que en clase. Se nota que le gusta lo que hace y sus clases son muy amenas. Lo recomiendo totalmente.”</p><div class="resena__pie"><span class="resena__autor">Carla Blázquez Muñoz</span><span class="resena__badge"><span class="g"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span> · Reseña</span></div></div>
+<div class="resena"><div class="resena__stars">★★★★★</div><p class="resena__texto">“Pasé de un 1 a un 8 en un mes en 1º de Bachillerato. Muy agradecido y muy hospitalario.”</p><div class="resena__pie"><span class="resena__autor">Gonzalo Azubel</span><span class="resena__badge"><span class="g"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span> · Reseña</span></div></div>
+<div class="resena"><div class="resena__stars">★★★★★</div><p class="resena__texto">“Muy agradecidos a la academia. Mi hija estaba totalmente atascada con Física II y Dibujo Técnico II, y ha pasado a aprobar con buenas notas; además entiende las asignaturas y va a ir con mucha más seguridad a la PAU.”</p><div class="resena__pie"><span class="resena__autor">Paloma González Muñoz</span><span class="resena__badge"><span class="g"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span> · Reseña</span></div></div>
+<div class="resena"><div class="resena__stars">★★★★★</div><p class="resena__texto">“Apunté a mi hijo este año para Física de 1º de Bachillerato con Javier. La atención y la profesionalidad son espectaculares, con una generosidad y entrega hacia el alumnado que no he visto en ninguna otra academia.”</p><div class="resena__pie"><span class="resena__autor">Eric de Castro</span><span class="resena__badge"><span class="g"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span> · Reseña</span></div></div>
+<div class="resena"><div class="resena__stars">★★★★★</div><p class="resena__texto">“Estamos muy agradecidos a Academia Logaritmo. En muy poco tiempo hemos notado un cambio enorme en el rendimiento de mi hija, especialmente en Matemáticas, una asignatura que antes le costaba bastante.”</p><div class="resena__pie"><span class="resena__autor">Fabiola Cavalletti</span><span class="resena__badge"><span class="g"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span> · Reseña</span></div></div>
+<div class="resena"><div class="resena__stars">★★★★★</div><p class="resena__texto">“Mis hijos están encantados y eso ya dice mucho. Javier es excelente y conecta con los alumnos. Explica los contenidos de forma muy clara y sencilla, y está muy pendiente, algo que valoramos muchísimo.”</p><div class="resena__pie"><span class="resena__autor">Arantxa Álvaro</span><span class="resena__badge"><span class="g"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span> · Reseña</span></div></div>
+<div class="resena"><div class="resena__stars">★★★★★</div><p class="resena__texto">“Excelente academia. Javier, además de ser un excelente profesor, es una magnífica persona, siempre apoyando a sus alumnos. Muy recomendable.”</p><div class="resena__pie"><span class="resena__autor">Laura Garrido</span><span class="resena__badge"><span class="g"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span> · Reseña</span></div></div>
+<div class="resena"><div class="resena__stars">★★★★★</div><p class="resena__texto">“Explica muy bien y es de mucha ayuda para sacar el curso. Muy agradecido.”</p><div class="resena__pie"><span class="resena__autor">Borja Lobato</span><span class="resena__badge"><span class="g"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span> · Reseña</span></div></div>
+<div class="resena"><div class="resena__stars">★★★★★</div><p class="resena__texto">“Totalmente recomendable. Un trato cercano y dedicado. Javier es un excelente profesional.”</p><div class="resena__pie"><span class="resena__autor">R. Ll.</span><span class="resena__badge"><span class="g"><b>G</b><b>o</b><b>o</b><b>g</b><b>l</b><b>e</b></span> · Reseña</span></div></div>
+</div>
+<button class="resenas__nav next" type="button" aria-label="Siguiente" id="resNext">&rsaquo;</button>
+</div>
+<script>
+(function(){
+  var track=document.getElementById('resTrack');
+  var prev=document.getElementById('resPrev'), next=document.getElementById('resNext');
+  if(!track) return;
+  function paso(){ var c=track.querySelector('.resena'); return c ? c.getBoundingClientRect().width + 22 : track.clientWidth; }
+  function avanzar(dir){
+    if(dir>0 && Math.ceil(track.scrollLeft + track.clientWidth) >= track.scrollWidth - 4){ track.scrollTo({left:0, behavior:'smooth'}); }
+    else { track.scrollBy({left: dir*paso(), behavior:'smooth'}); }
+  }
+  var timer=setInterval(function(){ avanzar(1); }, 4500);
+  function reinicia(){ clearInterval(timer); timer=setInterval(function(){ avanzar(1); }, 4500); }
+  next.addEventListener('click', function(){ avanzar(1); reinicia(); });
+  prev.addEventListener('click', function(){ avanzar(-1); reinicia(); });
+  track.addEventListener('mouseenter', function(){ clearInterval(timer); });
+  track.addEventListener('mouseleave', reinicia);
+})();
+</script>
+</section>
+
 <!-- FAQ -->
 <section class="faq" id="materiales">
 <h2>Preguntas frecuentes sobre nuestras clases</h2>
@@ -1052,6 +1109,13 @@ l.classList.add('active');
   ];
   var MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
   var DOW=['L','M','X','J','V','S','D'];
+  var DOWNOM=['lunes','martes','miércoles','jueves','viernes','sábado','domingo'];
+  function listar(a){ return a.length<=1 ? (a[0]||'') : a.slice(0,-1).join(', ')+' y '+a[a.length-1]; }
+  function diasMes(k){ var p=k.split('-'), y=parseInt(p[0],10), m=parseInt(p[1],10)-1, wd=[], hs={};
+    Object.keys(sel[k]).map(Number).sort(function(a,b){return a-b;}).forEach(function(d){
+      var idx=(new Date(y,m,d).getDay()+6)%7; if(wd.indexOf(idx)<0) wd.push(idx); hs[sel[k][d]]=1; });
+    wd.sort(function(a,b){return a-b;}); var h=Object.keys(hs);
+    return { texto: listar(wd.map(function(i){return DOWNOM[i];})), hcada: h.length===1?parseFloat(h[0]):null }; }
   var OPCIONES=[1,1.5,2,3,4];
 
   var horasActivas=2;
@@ -1188,17 +1252,17 @@ l.classList.add('active');
     claves.forEach(function(k){
       var dias=Object.keys(sel[k]);
       var horas=dias.reduce(function(a,d){ return a+sel[k][d]; },0);
-      var r=calcula(horas), eur, det;
+      var r=calcula(horas), eur, det, dm=diasMes(k);
       if(r && r.consultar){
         hayConsultar=true;
         eur='Consultar';
-        det=dias.length+' d&iacute;a'+(dias.length===1?'':'s')+' &middot; '+nh(horas)+' h &mdash; por encima de las 40 h/mes';
+        det=dm.texto+' &middot; '+nh(horas)+' h/mes &mdash; por encima de las 40 h/mes';
       }else{
         total+=r.total;
         eur=num(r.total)+' &euro;';
-        det=dias.length+' d&iacute;a'+(dias.length===1?'':'s')+' &middot; '+nh(horas)+' h &middot; tarifa mensual de '+r.tramo.hMes+' h/mes ('+num(r.ph)+' &euro;/h)';
+        det=dm.texto+(dm.hcada!=null?' ('+nh(dm.hcada)+' h cada día)':'')+' &middot; '+nh(horas)+' h/mes &middot; tarifa mensual de '+r.tramo.hMes+' h/mes ('+num(r.ph)+' &euro;/h)';
       }
-      txt.push(nomMes(k)+': '+dias.length+(dias.length===1?' día, ':' días, ')+nh(horas)+' h');
+      txt.push((claves.length>1?nomMes(k)+': ':'')+dm.texto+(dm.hcada!=null?' ('+nh(dm.hcada)+' h cada día)':'')+', '+nh(horas)+' h/mes');
       html+='<div class="sim-res__mes"><div class="sim-res__mes-top">'+
             '<span class="sim-res__mes-nom">'+nomMes(k)+'</span>'+
             '<span class="sim-res__mes-eur">'+eur+'</span></div>'+
@@ -1208,7 +1272,7 @@ l.classList.add('active');
           '<div class="sim-res__precio">'+num(total)+' &euro;'+(hayConsultar?' +':'')+'</div></div>';
     elDet.innerHTML=html;
     elCta.href='https://wa.me/34684790506?text='+encodeURIComponent(
-      '¡Hola! He calculado mi plan en la web: '+txt.join(' / ')+'. Precio: '+num(total)+' €. ¿Tenéis disponibilidad en ese horario?'
+      '¡Hola! Me gustaría venir '+txt.join('; ')+'. ¿Tenéis disponibilidad en ese horario? (Precio: '+num(total)+' €/mes)'
     );
   }
 
