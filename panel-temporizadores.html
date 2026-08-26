@@ -18,6 +18,7 @@
     --edge:rgba(233,169,58,.20);
     --tx:#eef6f9; --mut:#7d99a6;
     --run:#e9a93a; --warn:#ffd24a; --done:#ff5f52; --free:#4fd6c6;
+    --past:#b9736c;   /* pasado de tiempo: rojo apagado, para verlo sin senalar a nadie */
   }
 
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -144,17 +145,24 @@
   .card.warn .prog{stroke:url(#gWarn);filter:drop-shadow(0 0 calc(var(--u)*.8) rgba(255,210,74,.6))}
   .card.warn .disp,.card.warn .tag{color:var(--warn)}
   .card.warn{animation:pulse 1.4s ease-in-out infinite}
-  .card.done .prog{stroke:url(#gDone);filter:drop-shadow(0 0 calc(var(--u)*.9) rgba(255,95,82,.65))}
-  .card.done .track{stroke:rgba(255,95,82,.16)}
-  .card.done .ticks{stroke:rgba(255,95,82,.32)}
-  .card.done .disp,.card.done .mesa,.card.done .tag{color:var(--done)}
-  .card.done{animation:buzz .6s ease-in-out infinite}
+  /* fin: los 5 minutos para recoger y fichar la salida. El aro se vacia en ese margen */
+  .card.fin .prog{stroke:url(#gDone);filter:drop-shadow(0 0 calc(var(--u)*.9) rgba(255,95,82,.65))}
+  .card.fin .track{stroke:rgba(255,95,82,.16)}
+  .card.fin .ticks{stroke:rgba(255,95,82,.32)}
+  .card.fin .disp,.card.fin .mesa,.card.fin .tag{color:var(--done)}
+  .card.fin{animation:pulse 1.2s ease-in-out infinite}
+  /* pasado: ya se le fue el margen. Se ve, pero ni parpadea ni grita */
+  .card.pasado .prog{stroke:none;filter:none}
+  .card.pasado .track{stroke:rgba(185,115,108,.13)}
+  .card.pasado .ticks{stroke:rgba(185,115,108,.16)}
+  .card.pasado .mesa{color:var(--past);font-weight:600}
+  .card.pasado .disp{color:var(--past);font-size:calc(var(--card)*.185);font-weight:600}
+  .card.pasado .tag{color:var(--past);opacity:.7}
   .card.free .prog{stroke:rgba(79,214,198,.55)}
   .card.free .ticks{stroke:rgba(79,214,198,.28)}
   .card.free .disp{color:var(--free)}
   .card.free .tag{color:var(--free);opacity:.8}
-  @keyframes buzz{0%,100%{transform:translateX(0)}25%{transform:translateX(-.35%)}75%{transform:translateX(.35%)}}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.88}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.86}}
 
   /* ============ ticker (banda rodante) ============ */
   .ticker{
@@ -214,9 +222,13 @@
 
   .tk-item.warn .tk-time,.tk-item.warn .tk-ar{color:var(--warn)}
   .tk-item.warn .tk-bar b{background:var(--warn)}
-  .tk-item.done .tk-name,.tk-item.done .tk-time,.tk-item.done .tk-ar{color:var(--done)}
-  .tk-item.done .tk-bar b{background:var(--done)}
-  .tk-item.done .tk-time{animation:blink 1s steps(1,end) infinite}
+  .tk-item.fin .tk-name,.tk-item.fin .tk-time,.tk-item.fin .tk-ar{color:var(--done)}
+  .tk-item.fin .tk-bar b{background:var(--done)}
+  .tk-item.fin .tk-time{animation:blink 1s steps(1,end) infinite}
+  .tk-item.pasado .tk-name,.tk-item.pasado .tk-time,.tk-item.pasado .tk-ar{color:var(--past)}
+  .tk-item.pasado .tk-name,.tk-item.pasado .tk-time{font-weight:600}
+  .tk-item.pasado .tk-time{font-size:calc(var(--u)*2.1)}
+  .tk-item.pasado .tk-bar{display:none}
   .tk-item.free .tk-time,.tk-item.free .tk-ar{color:var(--free)}
   .tk-item.free .tk-bar b{background:rgba(79,214,198,.5)}
   @keyframes blink{0%,50%{opacity:1}51%,100%{opacity:.35}}
@@ -289,7 +301,8 @@ var AVISO_SEG   = 300;               // ultimos 5 min: el aro avisa en amarillo
 var CIRC        = 276.46;            // circunferencia del aro (2*PI*44)
 var FOCO_MAX    = 8;                 // hasta aqui, solo circulos grandes (sin banda)
 var FOCO_N      = 4;                 // cuantas mesas se ven en grande cuando hay banda
-var FOCO_DONE_MAX = 2;               // cuantas de esas cuatro pueden ser mesas ya acabadas
+var FOCO_FIN_MAX  = 2;               // cuantas de esas cuatro pueden ser mesas que acaban de terminar
+var MARGEN_SALIDA = 300;             // 5 min para recoger y fichar la salida; despues, tiempo de mas
 var TK_LAP      = 42;                // segundos que tarda la banda en dar una vuelta entera
 var TK_VEL_MIN  = 110;               // limites de velocidad (px/s) para que siempre se lea
 var TK_VEL_MAX  = 215;
@@ -359,20 +372,33 @@ function fmt(sec){
   var h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60;
   return h>0 ? h+':'+pad(m)+':'+pad(s) : pad(m)+':'+pad(s);
 }
+/* Cinco estados:
+     run    - en marcha
+     warn   - ultimos AVISO_SEG minutos
+     fin    - se acabo: MARGEN_SALIDA para recoger y fichar la salida
+     pasado - se le fue el margen y sigue dentro: el reloj cuenta en negativo
+     free   - sin hora de salida prevista
+   'orden' es la clave de urgencia: cuanto mas bajo, mas arriba en el foco. */
 function estado(s, nowMs){
-  if(s.mode!=='countdown') return {rem:null, frac:1, cls:'free'};
+  if(s.mode!=='countdown') return {rem:null, frac:1, cls:'free', orden:2e6};
   var rem = (s.targetMs - nowMs)/1000;
-  var frac = Math.max(0, Math.min(1, s.totalSec>0 ? rem/s.totalSec : 0));
-  return {rem:rem, frac:frac, cls: rem<=0 ? 'done' : (rem<=AVISO_SEG ? 'warn' : 'run')};
+  if(rem > 0){
+    var frac = Math.max(0, Math.min(1, s.totalSec>0 ? rem/s.totalSec : 0));
+    return {rem:rem, frac:frac, cls:(rem<=AVISO_SEG?'warn':'run'), orden:rem};
+  }
+  if(rem > -MARGEN_SALIDA){
+    /* el aro se vacia a lo largo del margen de salida */
+    return {rem:rem, frac:(rem+MARGEN_SALIDA)/MARGEN_SALIDA, cls:'fin', orden:rem};
+  }
+  /* pasado de tiempo: no acapara el foco, que lo necesita quien esta a punto de acabar */
+  return {rem:rem, frac:0, cls:'pasado', orden:1e6};
 }
-/* orden de urgencia: primero quien menos tiempo le queda; los "sin limite", al final */
+/* orden de urgencia: primero quien acaba de terminar, luego por tiempo restante;
+   los pasados de tiempo y los "sin limite", al final */
 function porUrgencia(){
   var now = Date.now();
   return Object.keys(sesiones).sort(function(a,b){
-    var ra = estado(sesiones[a], now).rem, rb = estado(sesiones[b], now).rem;
-    if(ra===null) ra = Infinity;
-    if(rb===null) rb = Infinity;
-    return ra - rb;
+    return estado(sesiones[a], now).orden - estado(sesiones[b], now).orden;
   });
 }
 /* en la banda el espacio manda: "Mesa Newton" -> "NEWTON", pero "Mesa 7" se queda entero */
@@ -474,15 +500,22 @@ function render(){
   if(!conBanda){
     enFoco = urgentes;
   }else{
-    /* los acabados son lo mas urgente, pero no pueden acaparar el foco entero:
-       si no, con varios sin recoger nadie ve quien esta a punto de terminar */
+    /* quien acaba de terminar es lo mas urgente, pero no puede acaparar el foco entero:
+       si no, con varios sin recoger nadie ve quien esta a punto de acabar */
     var now = Date.now();
-    var fin = [], vivos = [];
+    var fin = [], vivos = [], resto = [];
     urgentes.forEach(function(ref){
-      (estado(sesiones[ref], now).cls==='done' ? fin : vivos).push(ref);
+      var c = estado(sesiones[ref], now).cls;
+      if(c==='fin') fin.push(ref);
+      else if(c==='pasado' || c==='free') resto.push(ref);
+      else vivos.push(ref);
     });
-    var huecosFin = Math.min(fin.length, FOCO_DONE_MAX);
+    var huecosFin = Math.min(fin.length, FOCO_FIN_MAX);
     enFoco = fin.slice(0, huecosFin).concat(vivos.slice(0, FOCO_N - huecosFin));
+    /* si aun sobran huecos, se rellenan con lo que quede */
+    if(enFoco.length < FOCO_N){
+      enFoco = enFoco.concat(fin.slice(huecosFin), resto).slice(0, FOCO_N);
+    }
   }
 
   /* --- circulos --- */
@@ -566,10 +599,16 @@ function tick(){
     if(st.cls==='free'){
       texto = fmt((nowMs - s.startMs)/1000);
       etiqueta = 'Sin límite';
-    }else if(st.cls==='done'){
-      texto = '00:00';
-      etiqueta = '¡Tiempo!';
+    }else if(st.cls==='fin'){
+      /* durante el margen, el numero grande es lo que le queda para fichar la salida */
+      texto = fmt(MARGEN_SALIDA + st.rem);
+      etiqueta = 'Ficha la salida';
       if(!s.beeped){ s.beeped = true; beep(); }
+    }else if(st.cls==='pasado'){
+      /* a partir de aqui, el reloj cuenta en negativo: cuanto se ha pasado */
+      texto = '−'+fmt(-st.rem);
+      etiqueta = 'De más';
+      s.beeped = true;
     }else{
       texto = fmt(st.rem);
       etiqueta = 'Hasta las '+s.prevista;
@@ -588,7 +627,10 @@ function tick(){
     if(items) items.forEach(function(it){
       it.root.className = 'tk-item '+st.cls;
       it.time.textContent = texto;
-      it.ar.innerHTML = st.cls==='free' ? '&#9679;' : (st.cls==='done' ? '&#9632;' : '&#9662;');
+      it.ar.innerHTML = st.cls==='free'   ? '&#9679;'
+                      : st.cls==='fin'    ? '&#9632;'
+                      : st.cls==='pasado' ? '&#9633;'
+                      : '&#9662;';
       it.bar.style.width = (st.frac*100).toFixed(1)+'%';
     });
   });
@@ -638,8 +680,14 @@ function demo(){
   var lista = [];
   for(var i=0;i<DEMO_N;i++){
     var dur = [30,60,90,120][i%4];
-    /* reparto para que se vean los cuatro estados: uno acabado, un par avisando y el resto en marcha */
-    var transcurrido = (i===1) ? dur+2 : (i===3 ? dur-3 : (i===6 ? dur-2 : (i*17)%Math.max(1,dur-8)));
+    /* reparto para ver todos los estados: uno en margen de salida, uno pasado de tiempo,
+       un par avisando, alguno sin limite y el resto en marcha */
+    var transcurrido;
+    if(i===1)      transcurrido = dur+2;    // margen de salida
+    else if(i===4) transcurrido = dur+14;   // pasado de tiempo
+    else if(i===3) transcurrido = dur-3;    // avisando
+    else if(i===6) transcurrido = dur-2;    // avisando
+    else           transcurrido = (i*17) % Math.max(1, dur-8);
     var sinLimite = (i>0 && i%9===0);
     lista.push({
       ref:'A'+pad(i),
