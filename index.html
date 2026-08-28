@@ -359,6 +359,21 @@ text-align: right;
 padding: 0 20px;
 }
 .nota-asterisco b { color: var(--azul-oscuro); }
+/* ---- Nota de referencia de la tarifa ---- */
+.tarifa-referencia {
+max-width: 760px;
+margin: 0 auto 42px;
+padding: 18px 24px;
+background: var(--gris-claro);
+border-left: 4px solid var(--amarillo);
+border-radius: 8px;
+font-size: 1rem;
+line-height: 1.6;
+color: #2d3748;
+text-align: left;
+}
+.tarifa-referencia b { color: var(--azul-oscuro); }
+.tarifa-referencia a { color: var(--azul-oscuro); font-weight: 700; text-decoration: underline; }
 .precios-grid {
 display: grid;
 grid-template-columns: repeat(2, 1fr);
@@ -657,6 +672,7 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 .card.azul, .card.medio, .card.negro { order: unset; }
 .precios h2 { font-size: 2.5rem; }
 .aviso-curso { padding: 30px 24px 28px; border-radius: 16px; }
+.tarifa-referencia { padding: 15px 18px; font-size: 0.95rem; }
 .simulador h2 { font-size: 2.5rem; }
 .sim-wrap { grid-template-columns: 1fr; gap: 22px; }
 .sim-card { padding: 20px 16px; }
@@ -689,7 +705,6 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 </nav>
 <a class="header-cta" href="tel:+34684790506">Contáctanos</a>
 </header>
-
 <!-- HERO -->
 <section class="hero" id="inicio">
 <div class="hero-img"></div>
@@ -701,7 +716,6 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <p>En Logaritmo no solo estudias: descubres de lo que eres capaz, y tu potencial se transforma en resultados.</p>
 </div>
 </section>
-
 <!-- MISIÓN -->
 <section class="seccion-mision">
 <div class="caja-amarilla-wrap">
@@ -712,13 +726,11 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 </div>
 <div class="foto-aula"></div>
 </section>
-
 <!-- FRASE -->
 <section class="frase">
 <blockquote>"Hay una fuerza motriz más poderosa que el vapor, la electricidad y la energía atómica: la voluntad"</blockquote>
 <cite>– Albert Einstein</cite>
 </section>
-
 <!-- ASIGNATURAS -->
 <section class="asignaturas" id="curso">
 <h2>Clases de Matemáticas, Física-Química y Dibujo Técnico en Madrid</h2>
@@ -762,7 +774,6 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 </div>
 </div>
 </section>
-
 <!-- PRECIOS -->
 <section class="precios" id="informacion">
 <h2>Precios de nuestras clases</h2>
@@ -775,10 +786,11 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <div class="aviso-curso__cta"><a href="#simulador">Calcula tu precio &rsaquo;</a></div>
 <div class="aviso-curso__matricula">
 <div class="aviso-curso__precio"><span>Matrícula</span>29 €</div>
-<p class="aviso-curso__gratis"><b>Gratuita</b> para alumnos actuales y para quienes se matriculen antes de septiembre</p>
+<p class="aviso-curso__gratis"><b>Gratuita</b> todo septiembre y para antiguos alumnos</p>
 </div>
 </div>
 <p class="nota-asterisco">*Asignaturas de letras, artes, humanidades y música <b>consultar</b> con el centro <u>precio y disponibilidad</u></p>
+<p class="tarifa-referencia"><b>Precios de referencia para un mes de 4 semanas.</b> Cada mes trae un número distinto de clases, así que el importe real varía un poco: <a href="#simulador">calcula tu mes exacto aquí</a>.</p>
 <div class="precios-grid">
 <div class="precio-item">
 <div class="circulo">
@@ -812,7 +824,7 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <div class="circulo">
 <div class="horas">5h/semana</div>
 <div class="mensual">(20 horas mensuales)</div>
-<div class="precio">199€/mes</div>
+<div class="precio">197€/mes</div>
 </div>
 </div>
 <div class="precio-item">
@@ -860,7 +872,6 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 </div>
 </div>
 </section>
-
 <!-- SIMULADOR DE PRECIOS -->
 <section class="simulador" id="simulador">
 <h2>Calcula cuánto pagarías al mes</h2>
@@ -891,7 +902,6 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 </div>
 </div>
 </section>
-
 <!-- OPINIONES -->
 <section class="resenas" id="opiniones">
 <h2>Lo que dicen las familias</h2>
@@ -939,14 +949,13 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 })();
 </script>
 </section>
-
 <!-- FAQ -->
 <section class="faq" id="materiales">
 <h2>Preguntas frecuentes sobre nuestras clases</h2>
 <div class="faq-list">
 <div class="faq-item">
 <button class="faq-question">¿Cuándo y cuánto se paga por las clases?</button>
-<div class="faq-answer"><p>El pago se realiza mensualmente por adelantado. Consulta nuestra tabla de precios para conocer el coste según las horas semanales contratadas.</p></div>
+<div class="faq-answer"><p>El pago se realiza mensualmente por adelantado. Los precios de la tabla son la referencia de un mes de 4 semanas; como cada mes trae un número distinto de clases, el importe exacto lo puedes calcular en el <a href="#simulador" style="color:#f5b941; text-decoration:underline;">simulador</a>.</p></div>
 </div>
 <div class="faq-item">
 <button class="faq-question">¿Qué material debo llevar a las clases?</button>
@@ -982,7 +991,6 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 </div>
 </div>
 </section>
-
 <!-- DÓNDE ESTAMOS -->
 <section id="donde-estamos" style="background:var(--gris-claro); padding:60px 24px;">
 <div style="max-width:1000px; margin:0 auto; text-align:center;">
@@ -991,7 +999,6 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <iframe title="Mapa de Academia Logaritmo en Madrid" src="https://www.google.com/maps?q=Calle+Ferm%C3%ADn+Caballero+38,+28034+Madrid&output=embed" width="100%" height="320" style="border:0; border-radius:8px; max-width:760px;" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
 </div>
 </section>
-
 <!-- FOOTER -->
 <footer>
 <div class="footer-grid">
@@ -1030,7 +1037,6 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <p class="footer-credito"><a href="https://github.com" target="_blank" rel="noopener" title="Alojada en GitHub"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg> GitHub</a><span class="sep">&middot;</span><a href="https://claude.ai" target="_blank" rel="noopener" title="Hecha con Claude">&#10022; Claude</a><span class="sep">&middot;</span><span>&copy; 2026 Academia logaRitmo</span></p>
 </div>
 </footer>
-
 <script>
 // FAQ acordeón
 document.querySelectorAll('.faq-question').forEach(btn => {
@@ -1047,12 +1053,10 @@ l.classList.add('active');
 });
 });
 </script>
-
 <!-- BOTÓN FLOTANTE WHATSAPP -->
 <a href="https://wa.me/34684790506?text=Hola,%20me%20gustar%C3%ADa%20informaci%C3%B3n%20sobre%20el%20nuevo%20curso" class="wa-flotante" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp" title="Escríbenos por WhatsApp">
 <svg viewBox="0 0 24 24" width="30" height="30" fill="#fff" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.18 8.18 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.25 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg>
 </a>
-
 <!-- BURBUJA WHATSAPP (mensaje tipo chat) -->
 <div class="wa-popup" id="waPopup" role="dialog" aria-label="Mensaje de Academia Logaritmo por WhatsApp">
 <div class="wa-popup__header">
@@ -1092,20 +1096,19 @@ l.classList.add('active');
   }); }
 })();
 </script>
-
 <!-- SIMULADOR DE PRECIOS -->
 <script>
 (function(){
   var grid=document.getElementById('simGrid');
   if(!grid) return;
-
-  // Tarifa oficial: el bono mas pequeno que cubra las horas manda el precio/hora
+  // Tarifa oficial: el bono mas grande que quepa entero manda el precio/hora,
+  // y las horas que sobran se suman a ese mismo precio/hora.
   var TRAMOS=[
     {hMes:4,  precio:49},
     {hMes:8,  precio:89},
     {hMes:12, precio:129},
     {hMes:16, precio:159},
-    {hMes:20, precio:199},
+    {hMes:20, precio:197},
     {hMes:24, precio:235},
     {hMes:28, precio:265},
     {hMes:32, precio:285},
@@ -1121,33 +1124,33 @@ l.classList.add('active');
     wd.sort(function(a,b){return a-b;}); var h=Object.keys(hs);
     return { texto: listar(wd.map(function(i){return DOWNOM[i];})), hcada: h.length===1?parseFloat(h[0]):null }; }
   var OPCIONES=[1,1.5,2,3,4];
-
   var horasActivas=2;
   var sel={};                                  // 'YYYY-MM' -> { dia: horas }
   var hoy=new Date();
   var ver=new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-
   var elPills=document.getElementById('simPills');
   var elMes=document.getElementById('simMes');
   var elDet=document.getElementById('simDetalle');
   var elCta=document.getElementById('simCta');
-
   function num(n){ return n.toLocaleString('es-ES',{minimumFractionDigits:2, maximumFractionDigits:2}); }
   function nh(n){ return n.toLocaleString('es-ES',{maximumFractionDigits:1}); }
   function claveMes(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
   function nomMes(k){ var p=k.split('-'); return MESES[parseInt(p[1],10)-1]+' '+p[0]; }
-
   function calcula(horas){
     if(horas<=0) return null;
+    if(horas>47) return { consultar:true };
+    // el bono mas grande que cabe entero manda el precio/hora
+    var base=TRAMOS[0], sig=null;
     for(var i=0;i<TRAMOS.length;i++){
-      if(TRAMOS[i].hMes>=horas){
-        var ph=TRAMOS[i].precio/TRAMOS[i].hMes;
-        return { total: horas*ph, ph: ph, tramo: TRAMOS[i] };
-      }
+      if(TRAMOS[i].hMes<=horas) base=TRAMOS[i];
+      else if(sig===null) sig=TRAMOS[i];
     }
-    return { consultar:true };
+    var ph=base.precio/base.hMes;
+    var total=horas*ph;
+    // nunca mas caro que el bono siguiente entero
+    if(sig && total>sig.precio) total=sig.precio;
+    return { total: total, ph: ph, tramo: base };
   }
-
   // ---------- pills de horas ----------
   OPCIONES.forEach(function(h){
     var b=document.createElement('button');
@@ -1161,16 +1164,13 @@ l.classList.add('active');
     });
     elPills.appendChild(b);
   });
-
   // ---------- calendario ----------
   var arrastrando=false, modo=null;
-
   function pintaDia(btn, k, d){
     var h = sel[k] && sel[k][d];
     btn.classList.toggle('sim-dia--sel', !!h);
     btn.innerHTML='<span>'+d+'</span>'+(h?'<span class="sim-dia__h">'+nh(h)+' h</span>':'');
   }
-
   function aplica(btn, k, d){
     if(modo==='poner'){
       if(!sel[k]) sel[k]={};
@@ -1184,7 +1184,6 @@ l.classList.add('active');
     pintaDia(btn,k,d);
     resumen();
   }
-
   function pintaMes(){
     var k=claveMes(ver);
     elMes.textContent = MESES[ver.getMonth()]+' '+ver.getFullYear();
@@ -1228,7 +1227,6 @@ l.classList.add('active');
     }
     resumen();
   }
-
   // arrastre con el dedo
   grid.addEventListener('touchmove', function(ev){
     var t=ev.touches[0]; if(!t) return;
@@ -1240,10 +1238,8 @@ l.classList.add('active');
       aplica(btn, claveMes(ver), parseInt(btn.getAttribute('data-dia'),10));
     }
   }, {passive:false});
-
   document.addEventListener('mouseup', function(){ arrastrando=false; });
   grid.addEventListener('dragstart', function(e){ e.preventDefault(); });
-
   // ---------- resumen ----------
   function resumen(){
     var claves=Object.keys(sel).sort();
@@ -1260,13 +1256,13 @@ l.classList.add('active');
       if(r && r.consultar){
         hayConsultar=true;
         eur='Consultar';
-        det=dm.texto+' &middot; '+nh(horas)+' h/mes &mdash; por encima de las 40 h/mes';
+        det=dm.texto+' &middot; '+nh(horas)+' h en el mes &mdash; consúltanos el precio';
       }else{
         total+=r.total;
         eur=num(r.total)+' &euro;';
-        det=dm.texto+(dm.hcada!=null?' ('+nh(dm.hcada)+' h cada día)':'')+' &middot; '+nh(horas)+' h/mes &middot; tarifa mensual de '+r.tramo.hMes+' h/mes ('+num(r.ph)+' &euro;/h)';
+        det=dm.texto+(dm.hcada!=null?' ('+nh(dm.hcada)+' h cada día)':'')+' &middot; '+nh(horas)+' h en el mes &middot; '+num(r.ph)+' &euro;/h';
       }
-      txt.push((claves.length>1?nomMes(k)+': ':'')+dm.texto+(dm.hcada!=null?' ('+nh(dm.hcada)+' h cada día)':'')+', '+nh(horas)+' h/mes');
+      txt.push((claves.length>1?nomMes(k)+': ':'')+dm.texto+(dm.hcada!=null?' ('+nh(dm.hcada)+' h cada día)':'')+', '+nh(horas)+' h en el mes');
       html+='<div class="sim-res__mes"><div class="sim-res__mes-top">'+
             '<span class="sim-res__mes-nom">'+nomMes(k)+'</span>'+
             '<span class="sim-res__mes-eur">'+eur+'</span></div>'+
@@ -1276,10 +1272,9 @@ l.classList.add('active');
           '<div class="sim-res__precio">'+num(total)+' &euro;'+(hayConsultar?' +':'')+'</div></div>';
     elDet.innerHTML=html;
     elCta.href='https://wa.me/34684790506?text='+encodeURIComponent(
-      '¡Hola! Me gustaría venir '+txt.join('; ')+'. ¿Tenéis disponibilidad en ese horario? (Precio: '+num(total)+' €/mes)'
+      '¡Hola! Me gustaría venir '+txt.join('; ')+'. ¿Tenéis disponibilidad en ese horario? (Precio: '+num(total)+' €)'
     );
   }
-
   document.getElementById('simPrev').addEventListener('click', function(){
     ver=new Date(ver.getFullYear(), ver.getMonth()-1, 1); pintaMes();
   });
@@ -1289,12 +1284,9 @@ l.classList.add('active');
   document.getElementById('simBorrar').addEventListener('click', function(){
     sel={}; pintaMes();
   });
-
   pintaMes();
 })();
 </script>
-
-
 <style>
 /* el aviso de cookies ocupa la franja inferior: se aparta el WhatsApp mientras esté visible */
 body.aviso-cookies-visible .wa-flotante { bottom: 118px; }
