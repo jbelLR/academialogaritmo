@@ -875,7 +875,7 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <!-- SIMULADOR DE PRECIOS -->
 <section class="simulador" id="simulador">
 <h2>Calcula cuánto pagarías al mes</h2>
-<p class="sim-sub">Elige los días y las horas que necesitas y te mostramos tu precio mensual.</p>
+<p class="sim-sub">Selecciona los días y las horas que quieres venir. El precio se calcula según el <b>número real de clases de cada mes</b>, por eso puede variar un poco de un mes a otro.</p>
 <div class="sim-wrap">
 <div class="sim-card">
 <div class="sim-label">Horas por día</div>
@@ -898,7 +898,7 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <li>Material complementario incluido</li>
 </ul>
 <a class="sim-res__cta" id="simCta" href="https://wa.me/34684790506" target="_blank" rel="noopener">Quiero este horario</a>
-<p class="sim-res__nota">Matrícula gratuita todo septiembre y para antiguos alumnos. El precio final está sujeto a disponibilidad del horario elegido.</p>
+<p class="sim-res__nota">Los precios de la tabla corresponden a un mes de 4 semanas. Esta cuota se ajusta al número real de clases del mes que has marcado.<br><br>Matrícula gratuita todo septiembre y para antiguos alumnos. El precio final está sujeto a disponibilidad del horario elegido.</p>
 </div>
 </div>
 </section>
@@ -1118,11 +1118,20 @@ l.classList.add('active');
   var DOW=['L','M','X','J','V','S','D'];
   var DOWNOM=['lunes','martes','miércoles','jueves','viernes','sábado','domingo'];
   function listar(a){ return a.length<=1 ? (a[0]||'') : a.slice(0,-1).join(', ')+' y '+a[a.length-1]; }
-  function diasMes(k){ var p=k.split('-'), y=parseInt(p[0],10), m=parseInt(p[1],10)-1, wd=[], hs={};
-    Object.keys(sel[k]).map(Number).sort(function(a,b){return a-b;}).forEach(function(d){
-      var idx=(new Date(y,m,d).getDay()+6)%7; if(wd.indexOf(idx)<0) wd.push(idx); hs[sel[k][d]]=1; });
-    wd.sort(function(a,b){return a-b;}); var h=Object.keys(hs);
-    return { texto: listar(wd.map(function(i){return DOWNOM[i];})), hcada: h.length===1?parseFloat(h[0]):null }; }
+  function diasMes(k){
+    var p=k.split('-'), y=parseInt(p[0],10), m=parseInt(p[1],10)-1, porDia={}, sesiones=0;
+    Object.keys(sel[k]).map(Number).forEach(function(d){
+      var idx=(new Date(y,m,d).getDay()+6)%7;
+      if(!porDia[idx]) porDia[idx]={hs:{}};
+      porDia[idx].hs[sel[k][d]]=1;
+      sesiones++;
+    });
+    var partes=Object.keys(porDia).map(Number).sort(function(a,b){return a-b;}).map(function(i){
+      var h=Object.keys(porDia[i].hs).map(function(x){ return nh(parseFloat(x)); }).join('/');
+      return DOWNOM[i]+' '+h+' h';
+    });
+    return { texto: listar(partes), sesiones: sesiones };
+  }
   var OPCIONES=[1,1.5,2,3,4];
   var horasActivas=2;
   var sel={};                                  // 'YYYY-MM' -> { dia: horas }
@@ -1256,19 +1265,19 @@ l.classList.add('active');
       if(r && r.consultar){
         hayConsultar=true;
         eur='Consultar';
-        det=dm.texto+' &middot; '+nh(horas)+' h en el mes &mdash; consúltanos el precio';
+        det=dm.texto+' &middot; '+dm.sesiones+' clases &middot; '+nh(horas)+' h en el mes &mdash; consúltanos el precio';
       }else{
         total+=r.total;
         eur=num(r.total)+' &euro;';
-        det=dm.texto+(dm.hcada!=null?' ('+nh(dm.hcada)+' h cada día)':'')+' &middot; '+nh(horas)+' h en el mes &middot; '+num(r.ph)+' &euro;/h';
+        det=dm.texto+'<br>'+dm.sesiones+' clases &middot; '+nh(horas)+' h en el mes &middot; '+num(r.ph)+' &euro;/h';
       }
-      txt.push((claves.length>1?nomMes(k)+': ':'')+dm.texto+(dm.hcada!=null?' ('+nh(dm.hcada)+' h cada día)':'')+', '+nh(horas)+' h en el mes');
+      txt.push((claves.length>1?nomMes(k)+': ':'')+dm.texto+' ('+dm.sesiones+' clases, '+nh(horas)+' h en '+nomMes(k)+')');
       html+='<div class="sim-res__mes"><div class="sim-res__mes-top">'+
             '<span class="sim-res__mes-nom">'+nomMes(k)+'</span>'+
             '<span class="sim-res__mes-eur">'+eur+'</span></div>'+
             '<div class="sim-res__mes-det">'+det+'</div></div>';
     });
-    html+='<div class="sim-res__total"><small>'+(claves.length>1?'Total':'A pagar')+'</small>'+
+    html+='<div class="sim-res__total"><small>'+(claves.length>1?'Total':'Te saldría en')+'</small>'+
           '<div class="sim-res__precio">'+num(total)+' &euro;'+(hayConsultar?' +':'')+'</div></div>';
     elDet.innerHTML=html;
     elCta.href='https://wa.me/34684790506?text='+encodeURIComponent(
