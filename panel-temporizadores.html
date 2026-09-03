@@ -1,12 +1,11 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
+<!doctype html>
+<html lang="es"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Panel de tiempos &middot; Academia logaRitmo</title>
+<title>Panel de tiempos · Academia logaRitmo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
 <style>
   :root{
     /* unidad base: el panel se dibuja sobre un lienzo 16:9 de 100 x 56.25 unidades
@@ -105,7 +104,7 @@
   main{
     flex:1 1 auto;min-height:0;
     display:grid;place-content:center;justify-items:center;align-items:center;
-    gap:calc(var(--u)*2);
+    gap:calc(var(--u)*2.4);
     margin:calc(var(--u)*1.4) 0;
   }
 
@@ -163,6 +162,19 @@
   .card.free .disp{color:var(--free)}
   .card.free .tag{color:var(--free);opacity:.8}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.86}}
+
+  /* el circulo entra con un fundido corto cuando el foco rota, para que no dé un salto seco */
+  .card{animation:aparece .45s ease}
+  @keyframes aparece{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+
+  /* aviso pequeño de que el foco va rotando */
+  .rota{
+    position:absolute;left:50%;transform:translateX(-50%);
+    bottom:calc(var(--u)*.2);
+    font-size:calc(var(--u)*.95);font-weight:600;color:var(--mut);
+    letter-spacing:.18em;text-transform:uppercase;white-space:nowrap;
+  }
+  .rota.hidden{display:none}
 
   /* ============ ticker (banda rodante) ============ */
   .ticker{
@@ -247,9 +259,9 @@
 <body>
 
 <svg width="0" height="0" aria-hidden="true" style="position:absolute"><defs>
-  <linearGradient id="gRun"  x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7d79b"/><stop offset="1" stop-color="#e9a93a"/></linearGradient>
-  <linearGradient id="gWarn" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9a3"/><stop offset="1" stop-color="#ffc41f"/></linearGradient>
-  <linearGradient id="gDone" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9a90"/><stop offset="1" stop-color="#ff4438"/></linearGradient>
+  <linearGradient id="gRun" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7d79b"></stop><stop offset="1" stop-color="#e9a93a"></stop></linearGradient>
+  <linearGradient id="gWarn" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9a3"></stop><stop offset="1" stop-color="#ffc41f"></stop></linearGradient>
+  <linearGradient id="gDone" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9a90"></stop><stop offset="1" stop-color="#ff4438"></stop></linearGradient>
 </defs></svg>
 
 <div class="stage">
@@ -268,11 +280,12 @@
     <div class="meta">
       <div class="count"><b id="nActivos">0</b><span>en clase</span></div>
       <button id="sound">&#9834; Sonido</button>
-      <div id="conn"><span class="dot"></span><span id="connTxt">Conectando&hellip;</span></div>
+      <div id="conn" class=""><span class="dot"></span><span id="connTxt">En vivo</span></div>
     </div>
   </header>
 
   <main id="main"></main>
+  <div class="rota hidden" id="rota"></div>
 
   <div class="ticker hidden" id="ticker">
     <div class="tk-badge">
@@ -284,10 +297,10 @@
     </div>
   </div>
 
-  <div class="empty" id="empty">
+  <div class="empty on" id="empty">
     <img src="logo.png" alt="" onerror="this.style.display='none'">
     <div class="big">No hay nadie fichado ahora mismo</div>
-    <div class="sub">Cuando un alumno fiche la entrada, su mesa aparecer&aacute; aqu&iacute; con la cuenta atr&aacute;s.</div>
+    <div class="sub">Cuando un alumno fiche la entrada, su mesa aparecerá aquí con la cuenta atrás.</div>
   </div>
 
 </div>
@@ -299,10 +312,26 @@ var TOKEN       = "logaritmo2026";   // misma contrasena que el scanner
 var POLL_MS     = 10000;             // cada cuanto pregunta al backend quien esta en clase
 var AVISO_SEG   = 300;               // ultimos 5 min: el aro avisa en amarillo
 var CIRC        = 276.46;            // circunferencia del aro (2*PI*44)
-var FOCO_MAX    = 8;                 // hasta aqui, solo circulos grandes (sin banda)
-var FOCO_N      = 4;                 // cuantas mesas se ven en grande cuando hay banda
-var FOCO_FIN_MAX  = 2;               // cuantas de esas cuatro pueden ser mesas que acaban de terminar
+
+/* --- tamano de los circulos (Javier, 3 sept 2026) ---
+   Antes el tope era 40 unidades: con UN solo alumno el circulo se comia la tele entera.
+   CARD_MAX es el lado maximo en unidades del lienzo (100 = ancho completo). */
+var CARD_MAX    = 21;                // sube este numero si los quieres mas grandes
+var CARD_MIN_PX = 60;
+
+/* --- cuanta gente se ve en grande --- */
+var FOCO_MAX    = 6;                 // hasta aqui, todos en circulos (sin banda)
+var FOCO_N      = 3;                 // a partir de ahi, SOLO 3 en grande + la banda rodante
+var FOCO_FIN_MAX  = 2;               // cuantos de esos 3 pueden ser mesas que acaban de terminar
+var ROTA_MS     = 12000;             // cada cuanto rotan los circulos que NO son urgentes
+
 var MARGEN_SALIDA = 300;             // 5 min para recoger y fichar la salida; despues, tiempo de mas
+
+/* --- hora de cierre (Javier, 3 sept 2026) ---
+   Nadie tiene salida prevista mas tarde de esto: si el backend manda una hora posterior,
+   el panel la recorta. Evita cuentas atras que terminan con la academia cerrada. */
+var CIERRE_HHMM = "20:30";
+
 var TK_LAP      = 42;                // segundos que tarda la banda en dar una vuelta entera
 var TK_VEL_MIN  = 110;               // limites de velocidad (px/s) para que siempre se lea
 var TK_VEL_MAX  = 215;
@@ -319,6 +348,7 @@ var elLane   = document.getElementById('tkLane');
 var elEmpty  = document.getElementById('empty');
 var elReloj  = document.getElementById('reloj');
 var elN      = document.getElementById('nActivos');
+var elRota   = document.getElementById('rota');
 var conn     = document.getElementById('conn');
 var connTxt  = document.getElementById('connTxt');
 
@@ -328,7 +358,7 @@ var btnSound = document.getElementById('sound');
 btnSound.addEventListener('click', function(){
   soundOn = !soundOn;
   btnSound.classList.toggle('off', !soundOn);
-  btnSound.innerHTML = soundOn ? '♪ Sonido' : '♪ Silencio';
+  btnSound.innerHTML = soundOn ? '&#9834; Sonido' : '&#9834; Silencio';
   if (soundOn) desbloquearAudio();
 });
 var audioCtx = null;
@@ -366,6 +396,13 @@ function hhmmToTodayMs(hhmm){
   var p=String(hhmm).split(':');
   var d=new Date(); d.setHours(+p[0]||0, +p[1]||0, 0, 0);
   return d.getTime();
+}
+/* la salida prevista nunca pasa de la hora de cierre */
+function tope(hhmm){
+  if(!hhmm || !CIERRE_HHMM) return hhmm;
+  var a=String(hhmm).split(':'), b=CIERRE_HHMM.split(':');
+  var m1=(+a[0]||0)*60+(+a[1]||0), m2=(+b[0]||0)*60+(+b[1]||0);
+  return m1 > m2 ? CIERRE_HHMM : hhmm;
 }
 function fmt(sec){
   if(sec<0) sec=0; sec=Math.floor(sec);
@@ -422,7 +459,7 @@ function aplicar(lista){
     var s = sesiones[a.ref] || (sesiones[a.ref] = {});
     s.mesa     = a.mesa || 'Sin mesa';
     s.entrada  = a.entrada || '';
-    s.prevista = a.prevista || '';
+    s.prevista = tope(a.prevista || '');     // nunca mas tarde de CIERRE_HHMM
     s.mode     = s.prevista ? 'countdown' : 'countup';
     if(s.mode==='countdown'){
       s.targetMs = hhmmToTodayMs(s.prevista);
@@ -466,17 +503,17 @@ function columnas(n){
   if(n<=2) return 2;
   if(n<=3) return 3;
   if(n<=4) return 2;
-  if(n<=6) return 3;
-  return 4;
+  return 3;
 }
-/* mide el hueco real y calcula el lado del circulo: nunca se sale ni deja hueco de mas */
+/* mide el hueco real y calcula el lado del circulo: nunca se sale ni deja hueco de mas.
+   El tope CARD_MAX es lo que impide que con un solo alumno ocupe la pantalla entera. */
 function medirCards(nCols, nRows){
   var uu  = Math.min(window.innerWidth/100, window.innerHeight/56.25); // la misma --u del CSS
-  var gap = uu * 2;
+  var gap = uu * 2.4;
   var W = elMain.clientWidth, H = elMain.clientHeight;
   var w = (W - (nCols-1)*gap) / nCols;
   var h = (H - (nRows-1)*gap) / nRows;
-  var lado = Math.max(60, Math.min(w, h, uu*40));
+  var lado = Math.max(CARD_MIN_PX, Math.min(w, h, uu*CARD_MAX));
   elMain.style.setProperty('--card', lado.toFixed(1)+'px');
 }
 
@@ -489,6 +526,7 @@ function render(){
   if(n===0){
     elMain.innerHTML=''; elLane.innerHTML='';
     elTicker.classList.add('hidden');
+    elRota.classList.add('hidden');
     vista = {modo:null, sigCards:'', sigTk:'', cards:{}, tk:{}};
     return;
   }
@@ -496,26 +534,47 @@ function render(){
   var conBanda = n > FOCO_MAX;
   var urgentes = porUrgencia();
   var modo     = conBanda ? 'foco' : 'rejilla';
-  var enFoco;
+  var enFoco, rotando = 0;
+
   if(!conBanda){
     enFoco = urgentes;
   }else{
-    /* quien acaba de terminar es lo mas urgente, pero no puede acaparar el foco entero:
-       si no, con varios sin recoger nadie ve quien esta a punto de acabar */
+    /* Con mucha gente solo caben FOCO_N circulos. Reglas:
+         · quien acaba de terminar (fin) y quien esta en los ultimos minutos (warn) NO rotan:
+           son justo los que hay que mirar;
+         · los demas van pasando por el foco cada ROTA_MS, para que todos se vean;
+         · los "fin" no pueden acaparar el foco entero (FOCO_FIN_MAX). */
     var now = Date.now();
-    var fin = [], vivos = [], resto = [];
+    var fin = [], avisando = [], resto = [];
     urgentes.forEach(function(ref){
       var c = estado(sesiones[ref], now).cls;
       if(c==='fin') fin.push(ref);
-      else if(c==='pasado' || c==='free') resto.push(ref);
-      else vivos.push(ref);
+      else if(c==='warn') avisando.push(ref);
+      else resto.push(ref);
     });
-    var huecosFin = Math.min(fin.length, FOCO_FIN_MAX);
-    enFoco = fin.slice(0, huecosFin).concat(vivos.slice(0, FOCO_N - huecosFin));
-    /* si aun sobran huecos, se rellenan con lo que quede */
-    if(enFoco.length < FOCO_N){
-      enFoco = enFoco.concat(fin.slice(huecosFin), resto).slice(0, FOCO_N);
+    var fijos = fin.slice(0, Math.min(fin.length, FOCO_FIN_MAX)).concat(avisando);
+    fijos = fijos.slice(0, FOCO_N);
+    var libres = FOCO_N - fijos.length;
+    var pool = resto.concat(fin.slice(FOCO_FIN_MAX)).filter(function(r){ return fijos.indexOf(r)<0; });
+    var giro = [];
+    if(libres > 0 && pool.length){
+      if(pool.length <= libres){
+        giro = pool.slice();
+      }else{
+        rotando = pool.length;
+        var paso = Math.floor(Date.now()/ROTA_MS) * libres;
+        for(var k=0;k<libres;k++) giro.push(pool[(paso+k) % pool.length]);
+      }
     }
+    enFoco = fijos.concat(giro);
+  }
+
+  /* aviso de rotacion, para que se entienda que los circulos van pasando */
+  if(rotando > 0){
+    elRota.textContent = 'Los círculos van rotando entre las ' + n + ' mesas';
+    elRota.classList.remove('hidden');
+  }else{
+    elRota.classList.add('hidden');
   }
 
   /* --- circulos --- */
@@ -534,6 +593,7 @@ function render(){
     });
     medirCards(cols, rows);
     elMain.dataset.cols = cols; elMain.dataset.rows = rows;
+    tick();   // pinta los numeros ya, sin esperar al siguiente latido
   }
 
   /* --- banda rodante --- */
@@ -715,8 +775,8 @@ if(document.fonts && document.fonts.ready) document.fonts.ready.then(ajustarVelo
 poll();
 setInterval(poll, POLL_MS);
 setInterval(tick, 250);
-setInterval(render, 4000);   // reordena el foco cuando alguien acaba o llega
+setInterval(render, 2000);   // reordena y rota el foco
 tick();
 </script>
-</body>
-</html>
+
+</body></html>
