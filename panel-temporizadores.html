@@ -157,6 +157,10 @@
   .card.pasado .mesa{color:var(--past);font-weight:600}
   .card.pasado .disp{color:var(--past);font-size:calc(var(--card)*.185);font-weight:600}
   .card.pasado .tag{color:var(--past);opacity:.7}
+  .card.prep .prog{stroke:#7cc4ff;filter:drop-shadow(0 0 calc(var(--u)*.5) rgba(124,196,255,.45))}
+  .card.prep .track{stroke:rgba(124,196,255,.16)}
+  .card.prep .ticks{stroke:rgba(124,196,255,.3)}
+  .card.prep .disp,.card.prep .tag{color:#7cc4ff}
   .card.free .prog{stroke:rgba(79,214,198,.55)}
   .card.free .ticks{stroke:rgba(79,214,198,.28)}
   .card.free .disp{color:var(--free)}
@@ -241,6 +245,8 @@
   .tk-item.pasado .tk-name,.tk-item.pasado .tk-time{font-weight:600}
   .tk-item.pasado .tk-time{font-size:calc(var(--u)*2.1)}
   .tk-item.pasado .tk-bar{display:none}
+  .tk-item.prep .tk-time,.tk-item.prep .tk-ar{color:#7cc4ff}
+  .tk-item.prep .tk-bar b{background:#7cc4ff}
   .tk-item.free .tk-time,.tk-item.free .tk-ar{color:var(--free)}
   .tk-item.free .tk-bar b{background:rgba(79,214,198,.5)}
   @keyframes blink{0%,50%{opacity:1}51%,100%{opacity:.35}}
@@ -307,8 +313,11 @@
 
 <script>
 /* ===================== CONFIG ===================== */
+/* ⬇️ PEGA AQUI la URL /exec del Apps Script NUEVO del fichaje, la misma que el scanner. */
 var BACKEND_URL = "https://script.google.com/macros/s/AKfycbzlgJydfgPZl75_d8KYJe1VC6KVYj9mTxme1i9hDrAtLyFHDjSUxkfWBw_K6VC4pCgBaw/exec";
-var TOKEN       = "logaritmo2026";   // misma contrasena que el scanner
+/* Ya no hay contrasena. La que habia estaba escrita en claro en este
+   archivo, y este archivo es publico en academialogaritmo.com: cualquiera podia leerla.
+   El backend nuevo no pide token, asi que no hay nada que esconder aqui. */
 var POLL_MS     = 10000;             // cada cuanto pregunta al backend quien esta en clase
 var AVISO_SEG   = 300;               // ultimos 5 min: el aro avisa en amarillo
 var CIRC        = 276.46;            // circunferencia del aro (2*PI*44)
@@ -326,6 +335,11 @@ var FOCO_FIN_MAX  = 2;               // cuantos de esos 3 pueden ser mesas que a
 var ROTA_MS     = 12000;             // cada cuanto rotan los circulos que NO son urgentes
 
 var MARGEN_SALIDA = 300;             // 5 min para recoger y fichar la salida; despues, tiempo de mas
+
+/* --- margen de entrada (Javier, 9 sept 2026) ---
+   Los primeros minutos no son clase: son para sentarse y sacar los deberes y el material.
+   La tablet se lo dice al fichar y aqui se ve quien esta todavia en ese hueco. */
+var MARGEN_ENTRADA = 300;            // 5 minutos
 
 /* --- hora de cierre (Javier, 3 sept 2026) ---
    Nadie tiene salida prevista mas tarde de esto: si el backend manda una hora posterior,
@@ -417,6 +431,11 @@ function fmt(sec){
      free   - sin hora de salida prevista
    'orden' es la clave de urgencia: cuanto mas bajo, mas arriba en el foco. */
 function estado(s, nowMs){
+  /* Antes que nada: el margen de entrada. Vale igual con hora de salida y sin ella. */
+  if(s.claseMs && nowMs < s.claseMs){
+    var falta=(s.claseMs-nowMs)/1000;
+    return {rem:falta, frac:Math.max(0,Math.min(1,falta/MARGEN_ENTRADA)), cls:'prep', orden:falta};
+  }
   if(s.mode!=='countdown') return {rem:null, frac:1, cls:'free', orden:2e6};
   var rem = (s.targetMs - nowMs)/1000;
   if(rem > 0){
@@ -461,6 +480,9 @@ function aplicar(lista){
     s.entrada  = a.entrada || '';
     s.prevista = tope(a.prevista || '');     // nunca mas tarde de CIERRE_HHMM
     s.mode     = s.prevista ? 'countdown' : 'countup';
+    /* hora a la que se acaba el margen de entrada y empieza la clase de verdad */
+    var ent0   = hhmmToTodayMs(s.entrada);
+    s.claseMs  = (ent0!=null) ? ent0 + MARGEN_ENTRADA*1000 : null;
     if(s.mode==='countdown'){
       s.targetMs = hhmmToTodayMs(s.prevista);
       var entMs  = hhmmToTodayMs(s.entrada);
@@ -656,7 +678,11 @@ function tick(){
     var st = estado(s, nowMs);
     var texto, etiqueta;
 
-    if(st.cls==='free'){
+    if(st.cls==='prep'){
+      /* los primeros minutos: que saque el material, la clase aun no ha empezado */
+      texto = fmt(st.rem);
+      etiqueta = 'Saca el material';
+    }else if(st.cls==='free'){
       texto = fmt((nowMs - s.startMs)/1000);
       etiqueta = 'Sin límite';
     }else if(st.cls==='fin'){
@@ -717,7 +743,7 @@ function poll(){
     try{ delete window[cb]; }catch(e){}
     if(s.parentNode) s.parentNode.removeChild(s);
   }, 9000);
-  s.src = BACKEND_URL+'?action=activos&token='+encodeURIComponent(TOKEN)+'&callback='+cb+'&_='+Date.now();
+  s.src = BACKEND_URL+'?action=activos&callback='+cb+'&_='+Date.now();
   document.body.appendChild(s);
 }
 function marcarConn(ok){
