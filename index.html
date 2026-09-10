@@ -555,8 +555,20 @@ padding: 0 10px 22px;
 .sim-dia:hover:not(.sim-dia--off):not(.sim-dia--hueco) { border-color: var(--amarillo); }
 .sim-dia--off { background: #f1f4f8; color: #c4cedb; cursor: not-allowed; border-color: transparent; }
 .sim-dia--hueco { border: 0; background: transparent; cursor: default; }
+.sim-dia--fiesta { background: #fdecec; color: #c0564f; border-color: #f6d6d4; cursor: not-allowed; }
+.sim-nav__btn:disabled { opacity: .3; cursor: not-allowed; border-color: #e6ecf3; }
+.sim-nav__btn:disabled:hover { border-color: #e6ecf3; }
+.sim-leyenda { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; margin-top: 14px; font-size: .78rem; color: #6b7d92; }
+.sim-leyenda span { display: inline-flex; align-items: center; gap: 6px; }
+.sim-leyenda i { width: 13px; height: 13px; border-radius: 4px; display: inline-block; border: 2px solid; }
+.sim-trimestre { text-align: center; font-size: .8rem; color: #8b9bb0; margin: 10px 0 0; }
 .sim-dia--sel { background: var(--azul-oscuro); border-color: var(--azul-oscuro); color: #fff; }
 .sim-dia__h { font-size: 0.6rem; font-weight: 700; color: var(--amarillo); line-height: 1; margin-top: 3px; }
+.sim-hora-wrap { display: none; align-items: center; gap: 10px; margin-top: 4px; }
+.sim-hora-wrap.on { display: flex; }
+.sim-hora-lb { font-size: 0.86rem; color: #4a5568; font-weight: 600; }
+.sim-hora { font-family: inherit; font-size: 0.95rem; font-weight: 700; color: var(--azul-oscuro); padding: 8px 12px; border: 2px solid #dde4ec; border-radius: 11px; background: #fff; cursor: pointer; }
+.sim-hora:focus { outline: none; border-color: var(--amarillo); }
 .sim-borrar { background: none; border: 0; color: #7d8ca1; font-size: 0.85rem; text-decoration: underline; cursor: pointer; margin-top: 18px; font-family: inherit; padding: 0; }
 .sim-borrar:hover { color: var(--azul-oscuro); }
 .sim-res { background: linear-gradient(135deg, var(--azul-oscuro) 0%, var(--azul-medio) 100%); color: #fff; border-radius: 20px; padding: 30px 28px; box-shadow: 0 14px 34px rgba(17,40,73,0.22); }
@@ -886,6 +898,17 @@ nav ul { gap: 15px; flex-wrap: wrap; justify-content: center; }
 <button class="sim-nav__btn" id="simNext" type="button" aria-label="Mes siguiente">&rsaquo;</button>
 </div>
 <div class="sim-grid" id="simGrid"></div>
+<div class="sim-leyenda">
+<span><i style="background:#fdecec;border-color:#f6d6d4"></i>Festivo o vacaciones &mdash; cerrado</span>
+<span><i style="background:#fff;border-color:#e6ecf3"></i>S&aacute;bados: cons&uacute;ltanos</span>
+</div>
+<p class="sim-trimestre">Primer trimestre del curso 2026-27, de septiembre a enero.</p>
+<div class="sim-label" style="margin-top:26px">¿A qué hora te viene bien?</div>
+<div class="sim-pills" id="simFranja"></div>
+<div class="sim-hora-wrap" id="simHoraWrap">
+<label class="sim-hora-lb" for="simHora">Hora preferida</label>
+<select class="sim-hora" id="simHora"></select>
+</div>
 <button class="sim-borrar" id="simBorrar" type="button">Borrar todo y empezar de nuevo</button>
 </div>
 <div class="sim-res">
@@ -1054,7 +1077,7 @@ l.classList.add('active');
 });
 </script>
 <!-- BOTÓN FLOTANTE WHATSAPP -->
-<a href="https://wa.me/34684790506?text=Hola,%20me%20gustar%C3%ADa%20informaci%C3%B3n%20sobre%20el%20nuevo%20curso" class="wa-flotante" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp" title="Escríbenos por WhatsApp">
+<a href="https://wa.me/34684790506?text=Hola%2C%20me%20gustar%C3%ADa%20informaci%C3%B3n%20sobre%20el%20nuevo%20curso.%20Asignatura%3A%20____%20%C2%B7%20Curso%3A%20____%20%C2%B7%20D%C3%ADas%20que%20me%20vienen%20bien%3A%20____%20%C2%B7%20Hora%3A%20____" class="wa-flotante" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp" title="Escríbenos por WhatsApp">
 <svg viewBox="0 0 24 24" width="30" height="30" fill="#fff" aria-hidden="true"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.18 8.18 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 2.2 0 4.27.86 5.82 2.42a8.18 8.18 0 0 1 2.41 5.83c0 4.54-3.7 8.23-8.25 8.23zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.14-1.18-.06-.1-.22-.16-.47-.28z"/></svg>
 </a>
 <!-- BURBUJA WHATSAPP (mensaje tipo chat) -->
@@ -1115,6 +1138,41 @@ l.classList.add('active');
     {hMes:40, precio:335}
   ];
   var MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+  /* ============================================================
+     DÍAS QUE LA ACADEMIA NO ABRE  —  ESTA ES LA LISTA QUE SE TOCA
+     ------------------------------------------------------------
+     Dos formatos:
+        ['2026-10-12', 'motivo']                    -> un solo día
+        ['2026-12-24', '2027-01-06', 'motivo']      -> un rango, los dos incluidos
+     De dónde sale lo que hay puesto:
+       · Festivos oficiales de la Comunidad de Madrid 2026.
+       · La Almudena (9 nov) es festivo LOCAL de Madrid capital: quítalo si abres.
+       · El cierre de Navidad lo decidiste el 28 de agosto: del 24 dic al 6 de enero,
+         vuelta el 7. Está escrito en el Diario del 30 de agosto.
+     ============================================================ */
+  var CIERRES=[
+    ['2026-10-12', 'Fiesta Nacional'],
+    ['2026-11-02', 'Todos los Santos'],
+    ['2026-11-09', 'La Almudena'],
+    ['2026-12-07', 'Día de la Constitución'],
+    ['2026-12-08', 'La Inmaculada'],
+    ['2026-12-24', '2027-01-06', 'Vacaciones de Navidad']
+  ];
+  /* Meses que se pueden mirar. Ni antes ni después: el calendario del curso
+     llega hasta aquí, y enseñar 2028 solo sirve para que alguien reserve en el vacío. */
+  var MES_MIN='2026-09', MES_MAX='2027-01';
+
+  var CERRADO={};                                   // 'YYYY-MM-DD' -> motivo
+  function iso(y,m,d){ return y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0'); }
+  CIERRES.forEach(function(c){
+    if(c.length===2){ CERRADO[c[0]]=c[1]; return; }
+    var f=new Date(c[0]+'T12:00:00'), fin=new Date(c[1]+'T12:00:00');
+    while(f<=fin){
+      CERRADO[iso(f.getFullYear(), f.getMonth(), f.getDate())]=c[2];
+      f.setDate(f.getDate()+1);
+    }
+  });
   var DOW=['L','M','X','J','V','S','D'];
   var DOWNOM=['lunes','martes','miércoles','jueves','viernes','sábado','domingo'];
   function listar(a){ return a.length<=1 ? (a[0]||'') : a.slice(0,-1).join(', ')+' y '+a[a.length-1]; }
@@ -1137,10 +1195,64 @@ l.classList.add('active');
   var sel={};                                  // 'YYYY-MM' -> { dia: horas }
   var hoy=new Date();
   var ver=new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+  // si hoy cae fuera del trimestre, se abre en el primer mes que sí está
+  if(claveMes(ver)<MES_MIN) ver=new Date(+MES_MIN.split('-')[0], +MES_MIN.split('-')[1]-1, 1);
+  if(claveMes(ver)>MES_MAX) ver=new Date(+MES_MAX.split('-')[0], +MES_MAX.split('-')[1]-1, 1);
   var elPills=document.getElementById('simPills');
   var elMes=document.getElementById('simMes');
   var elDet=document.getElementById('simDetalle');
   var elCta=document.getElementById('simCta');
+  // ---------- franja horaria ----------
+  var FRANJAS=[
+    {k:'manana', et:'Por la mañana', txt:'por la mañana',  h0:9,  h1:14},
+    {k:'tarde',  et:'Por la tarde',  txt:'por la tarde',   h0:16, h1:21},
+    {k:'igual',  et:'Me da igual',   txt:'',               h0:0,  h1:0}
+  ];
+  var franja=null, horaPref='';
+  var elFranja=document.getElementById('simFranja');
+  var elHoraWrap=document.getElementById('simHoraWrap');
+  var elHora=document.getElementById('simHora');
+  function pintaHoras(f){
+    elHora.innerHTML='';
+    var o=document.createElement('option'); o.value=''; o.textContent='Sin preferencia'; elHora.appendChild(o);
+    if(!f || !f.h1) return;
+    for(var h=f.h0; h<f.h1; h++){
+      ['00','30'].forEach(function(m){
+        var v=h+':'+m;
+        var op=document.createElement('option'); op.value=v; op.textContent=v; elHora.appendChild(op);
+      });
+    }
+  }
+  FRANJAS.forEach(function(f){
+    var b=document.createElement('button');
+    b.type='button'; b.className='sim-pill'; b.textContent=f.et;
+    b.addEventListener('click', function(){
+      franja = (franja && franja.k===f.k) ? null : f;
+      horaPref='';
+      Array.prototype.forEach.call(elFranja.children,function(x){ x.classList.remove('activa'); });
+      if(franja) b.classList.add('activa');
+      elHoraWrap.classList.toggle('on', !!(franja && franja.h1));
+      pintaHoras(franja);
+      resumen();
+    });
+    elFranja.appendChild(b);
+  });
+  elHora.addEventListener('change', function(){ horaPref=elHora.value; resumen(); });
+  function fechasMes(k){
+    var p=k.split('-'), y=parseInt(p[0],10), m=parseInt(p[1],10)-1;
+    var dias=Object.keys(sel[k]).map(Number).sort(function(a,b){ return a-b; });
+    var partes=dias.map(function(d){
+      var idx=(new Date(y,m,d).getDay()+6)%7;
+      return DOWNOM[idx]+' '+d+' ('+nh(sel[k][d])+' h)';
+    });
+    return listar(partes)+' de '+MESES[m];
+  }
+  function textoFranja(){
+    if(!franja) return '';
+    if(horaPref) return ' Me vendría bien sobre las '+horaPref+'.';
+    if(!franja.txt) return ' La hora me da igual.';
+    return ' Me vendría bien '+franja.txt+'.';
+  }
   function num(n){ return n.toLocaleString('es-ES',{minimumFractionDigits:2, maximumFractionDigits:2}); }
   function nh(n){ return n.toLocaleString('es-ES',{maximumFractionDigits:1}); }
   function claveMes(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
@@ -1196,6 +1308,8 @@ l.classList.add('active');
   function pintaMes(){
     var k=claveMes(ver);
     elMes.textContent = MESES[ver.getMonth()]+' '+ver.getFullYear();
+    document.getElementById('simPrev').disabled = (k<=MES_MIN);
+    document.getElementById('simNext').disabled = (k>=MES_MAX);
     grid.innerHTML='';
     DOW.forEach(function(d){
       var c=document.createElement('div'); c.className='sim-dow'; c.textContent=d; grid.appendChild(c);
@@ -1209,13 +1323,20 @@ l.classList.add('active');
     for(var d=1; d<=dias; d++){
       (function(d){
         var f=new Date(ver.getFullYear(), ver.getMonth(), d);
-        var finde=(f.getDay()===0 || f.getDay()===6);
+        // El sábado SE PUEDE marcar (Javier, 28 ago: «sábados solo si pagan»).
+        // El domingo no, y los días de CIERRES tampoco.
+        var domingo=(f.getDay()===0);
+        var motivo=CERRADO[iso(ver.getFullYear(), ver.getMonth(), d)] || null;
+        var cerrado=domingo || !!motivo;
         var b=document.createElement('button');
         b.type='button';
-        b.className='sim-dia'+(finde?' sim-dia--off':'');
+        b.className='sim-dia'+(cerrado?' sim-dia--off':'')+(motivo?' sim-dia--fiesta':'');
         b.setAttribute('data-dia', d);
+        b.title = motivo ? motivo
+                : domingo ? 'Domingo: cerrado'
+                : (f.getDay()===6 ? 'Sábado: consúltanos disponibilidad' : '');
         pintaDia(b,k,d);
-        if(finde){ b.disabled=true; }
+        if(cerrado){ b.disabled=true; }
         else{
           b.addEventListener('mousedown', function(ev){
             ev.preventDefault();
@@ -1254,7 +1375,7 @@ l.classList.add('active');
     var claves=Object.keys(sel).sort();
     if(!claves.length){
       elDet.innerHTML='<p class="sim-res__vacio">Marca en el calendario los d&iacute;as que vas a venir.<br>El precio aparecer&aacute; aqu&iacute;.</p>';
-      elCta.href='https://wa.me/34684790506?text='+encodeURIComponent('Hola, me gustaría información sobre las clases.');
+      elCta.href='https://wa.me/34684790506?text='+encodeURIComponent('Hola, me gustaría información sobre las clases.'+textoFranja());
       return;
     }
     var html='', total=0, hayConsultar=false, txt=[];
@@ -1271,7 +1392,7 @@ l.classList.add('active');
         eur=num(r.total)+' &euro;';
         det=dm.texto+'<br>'+dm.sesiones+' clases &middot; '+nh(horas)+' h en el mes &middot; '+num(r.ph)+' &euro;/h';
       }
-      txt.push((claves.length>1?nomMes(k)+': ':'')+dm.texto+' ('+dm.sesiones+' clases, '+nh(horas)+' h en '+nomMes(k)+')');
+      txt.push(fechasMes(k)+' \u2014 '+dm.sesiones+' clases, '+nh(horas)+' h');
       html+='<div class="sim-res__mes"><div class="sim-res__mes-top">'+
             '<span class="sim-res__mes-nom">'+nomMes(k)+'</span>'+
             '<span class="sim-res__mes-eur">'+eur+'</span></div>'+
@@ -1281,14 +1402,19 @@ l.classList.add('active');
           '<div class="sim-res__precio">'+num(total)+' &euro;'+(hayConsultar?' +':'')+'</div></div>';
     elDet.innerHTML=html;
     elCta.href='https://wa.me/34684790506?text='+encodeURIComponent(
-      '¡Hola! Me gustaría venir '+txt.join('; ')+'. ¿Tenéis disponibilidad en ese horario? (Precio: '+num(total)+' €)'
+      '¡Hola! Me gustaría venir '+txt.join('; ')+'.'+textoFranja()+
+      ' ¿Tenéis disponibilidad en ese horario? (Precio orientativo: '+num(total)+' €)'
     );
   }
   document.getElementById('simPrev').addEventListener('click', function(){
-    ver=new Date(ver.getFullYear(), ver.getMonth()-1, 1); pintaMes();
+    var n=new Date(ver.getFullYear(), ver.getMonth()-1, 1);
+    if(claveMes(n)<MES_MIN) return;
+    ver=n; pintaMes();
   });
   document.getElementById('simNext').addEventListener('click', function(){
-    ver=new Date(ver.getFullYear(), ver.getMonth()+1, 1); pintaMes();
+    var n=new Date(ver.getFullYear(), ver.getMonth()+1, 1);
+    if(claveMes(n)>MES_MAX) return;
+    ver=n; pintaMes();
   });
   document.getElementById('simBorrar').addEventListener('click', function(){
     sel={}; pintaMes();
