@@ -730,7 +730,11 @@ function poll(){
   var resuelto = false;
   window[cb] = function(res){
     resuelto = true;
-    try{ aplicar((res && res.alumnos) ? res.alumnos : []); marcarConn(true); }
+    try{
+      var lista = res && (res.activos || res.alumnos);
+      aplicar(lista || []);
+      marcarConn(true);
+    }
     catch(e){ marcarConn(false); }
     delete window[cb]; if(s.parentNode) s.parentNode.removeChild(s);
   };
