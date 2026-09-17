@@ -109,8 +109,8 @@
     padding:9% 8% 14%;text-align:center;
   }
   .card .mesa{
-    font-size:calc(var(--card)*.105);font-weight:800;line-height:1.05;color:var(--gold);
-    text-transform:uppercase;letter-spacing:.03em;
+    font-size:calc(var(--card)*.13);font-weight:800;line-height:1.05;color:var(--gold);
+    letter-spacing:.01em;
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
   }
   .card .disp{
@@ -120,10 +120,6 @@
   .card .tag{
     font-size:calc(var(--card)*.065);font-weight:700;
     letter-spacing:.04em;color:var(--tx);
-  }
-  .card .nom{
-    font-size:calc(var(--card)*.06);font-weight:500;color:var(--mut);
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
   }
   .card .barra{
     position:absolute;left:0;right:0;bottom:0;height:calc(var(--card)*.045);
@@ -201,15 +197,15 @@
     background:linear-gradient(180deg,transparent,var(--edge),transparent);
   }
   .tk-name{
-    font-size:calc(var(--u)*1.55);font-weight:700;color:var(--tx);
-    text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;
+    font-size:calc(var(--u)*1.7);font-weight:700;color:var(--tx);
+    letter-spacing:.02em;white-space:nowrap;
   }
   .tk-time{
     font-size:calc(var(--u)*2.5);font-weight:700;color:var(--gold2);
     font-variant-numeric:tabular-nums;letter-spacing:-.01em;white-space:nowrap;
   }
   .tk-ar{font-size:calc(var(--u)*1.5);color:var(--gold);line-height:1}
-  .tk-nom{font-size:calc(var(--u)*1.1);font-weight:500;color:var(--mut);white-space:nowrap}
+
   .tk-bar{
     position:absolute;left:calc(var(--u)*1.6);right:calc(var(--u)*1.6);
     bottom:calc(var(--u)*1.5);height:calc(var(--u)*.28);
@@ -279,7 +275,7 @@
   <div class="empty on" id="empty">
     <img src="logo.png" alt="" onerror="this.style.display='none'">
     <div class="big">No hay nadie fichado ahora mismo</div>
-    <div class="sub">Cuando un alumno fiche la entrada, aquí saldrá su mesa con la cuenta atrás.</div>
+    <div class="sub">Cuando un alumno fiche la entrada, aquí saldrá su nombre con su hora de salida.</div>
   </div>
 
 </div>
@@ -318,9 +314,9 @@ var MARGEN_ENTRADA = 300;            // 5 minutos
    el panel la recorta. Evita cuentas atras que terminan con la academia cerrada. */
 var CIERRE_HHMM = "20:30";
 
-var TK_LAP      = 42;                // segundos que tarda la banda en dar una vuelta entera
-var TK_VEL_MIN  = 110;               // limites de velocidad (px/s) para que siempre se lea
-var TK_VEL_MAX  = 215;
+var TK_LAP      = 75;                // segundos que tarda la banda en dar una vuelta entera
+var TK_VEL_MIN  = 55;                 // limites de velocidad (px/s). Mas despacio desde el 17 sept (Javier)
+var TK_VEL_MAX  = 110;
 /* ================================================== */
 
 /* modo demo sin backend:  ?demo=24  (o ?demo=1 para las 16 de siempre) */
@@ -342,7 +338,8 @@ var connTxt  = document.getElementById('connTxt');
 /* Sin sonido (Javier, 17 sept 2026): el aula tiene que estar en silencio. */
 
 /* ---- estado ----
-   la clave interna es la ref (ID del alumno) y NUNCA se muestra. Se ve la mesa y, en pequeño, el nombre de pila */
+   la clave interna es la ref (ID del alumno) y NUNCA se muestra. Solo se ve el nombre de pila
+   (Javier, 17 sept 2026); si dos se llaman igual, se añade la inicial del apellido. */
 var sesiones = {};
 var vista = { modo:null, sigCards:'', sigTk:'', cards:{}, tk:{} };
 var ultimaOk = 0;
@@ -406,10 +403,10 @@ function mesaCorta(m){
   var r = s.replace(/^mesa\s+/i,'');
   return (/^\d+$/.test(r) || r.length<=2) ? s.toUpperCase() : r;
 }
-/* orden estable para la banda: alfabetico por mesa, asi no baila al pasar */
+/* orden estable para la banda: alfabetico por nombre, asi no baila al pasar */
 function porMesa(){
   return Object.keys(sesiones).sort(function(a,b){
-    return String(sesiones[a].mesa).localeCompare(String(sesiones[b].mesa), 'es');
+    return String(sesiones[a].corto).localeCompare(String(sesiones[b].corto), 'es');
   });
 }
 
@@ -437,7 +434,24 @@ function aplicar(lista){
     }
   });
   Object.keys(sesiones).forEach(function(ref){ if(!vistos[ref]) delete sesiones[ref]; });
+  ponerNombres();
   render();
+}
+
+function ponerNombres(){
+  var cuenta = {};
+  var trozos = {};
+  Object.keys(sesiones).forEach(function(ref){
+    var p = String(sesiones[ref].nombre || sesiones[ref].mesa || '').trim().split(/\s+/);
+    trozos[ref] = p;
+    var k = (p[0]||'').toLowerCase();
+    cuenta[k] = (cuenta[k]||0) + 1;
+  });
+  Object.keys(sesiones).forEach(function(ref){
+    var p = trozos[ref], pila = p[0] || '?';
+    var repe = cuenta[pila.toLowerCase()] > 1 && p[1];
+    sesiones[ref].corto = repe ? pila + ' ' + p[1].charAt(0).toUpperCase() + '.' : pila;
+  });
 }
 
 /* ---- construccion de la vista ---- */
@@ -446,17 +460,17 @@ function makeCard(){
   c.className = 'card';
   c.innerHTML =
     '<div class="inner"><div class="mesa"></div><div class="disp">--:--</div>'+
-    '<div class="tag"></div><div class="nom"></div></div>'+
+    '<div class="tag"></div></div>'+
     '<i class="barra"><b></b></i>';
   return {root:c, mesa:c.querySelector('.mesa'), disp:c.querySelector('.disp'),
-          tag:c.querySelector('.tag'), nom:c.querySelector('.nom'), bar:c.querySelector('.barra b')};
+          tag:c.querySelector('.tag'), bar:c.querySelector('.barra b')};
 }
 function makeTkItem(){
   var d = document.createElement('div');
   d.className = 'tk-item';
-  d.innerHTML = '<span class="tk-name"></span><span class="tk-nom"></span><span class="tk-time">--:--</span>'+
+  d.innerHTML = '<span class="tk-name"></span><span class="tk-time">--:--</span>'+
                 '<span class="tk-ar">&#9662;</span><i class="tk-bar"><b></b></i>';
-  return {root:d, name:d.querySelector('.tk-name'), nom:d.querySelector('.tk-nom'), time:d.querySelector('.tk-time'),
+  return {root:d, name:d.querySelector('.tk-name'), time:d.querySelector('.tk-time'),
           ar:d.querySelector('.tk-ar'), bar:d.querySelector('.tk-bar b')};
 }
 
@@ -534,7 +548,7 @@ function render(){
 
   /* aviso de rotacion, para que se entienda que los circulos van pasando */
   if(rotando > 0){
-    elRota.textContent = 'Las tarjetas van rotando entre las ' + n + ' mesas';
+    elRota.textContent = 'Las tarjetas van rotando entre los ' + n + ' alumnos';
     elRota.classList.remove('hidden');
   }else{
     elRota.classList.add('hidden');
@@ -567,7 +581,7 @@ function render(){
   }else{
     elTicker.classList.remove('hidden');
     var orden = porMesa();
-    var sigTk = orden.join(',');
+    var sigTk = orden.map(function(r){ return r+':'+sesiones[r].corto; }).join(',');
     if(sigTk !== vista.sigTk){
       vista.sigTk = sigTk;
       vista.tk = {};
@@ -578,8 +592,7 @@ function render(){
         run.className = 'tk-run';
         orden.forEach(function(ref){
           var it = makeTkItem();
-          it.name.textContent = mesaCorta(sesiones[ref].mesa);
-          it.nom.textContent  = sesiones[ref].nombre;
+          it.name.textContent = sesiones[ref].corto;
           run.appendChild(it.root);
           (vista.tk[ref] = vista.tk[ref] || []).push(it);
         });
@@ -641,10 +654,9 @@ function tick(){
     var c = vista.cards[ref];
     if(c){
       c.root.className = 'card '+st.cls;
-      c.mesa.textContent = mesaCorta(s.mesa);
+      c.mesa.textContent = s.corto;
       c.disp.textContent = texto;
       c.tag.textContent  = etiqueta;
-      c.nom.textContent  = s.nombre;
       c.bar.style.width  = (st.frac*100).toFixed(1)+'%';
     }
     var items = vista.tk[ref];
@@ -720,7 +732,7 @@ function demo(){
     lista.push({
       ref:'A'+pad(i),
       mesa:NOMBRES[i%NOMBRES.length],
-      nombre:['Lucía','Pablo','Sofía','Jaime','Carmen','Juan','Elena','Daniel'][i%8],
+      nombre:['Lucía Pérez','Pablo Molero','Sofía Quesada','Jaime Fernández','Carmen Encina','Juan Encina','Elena Vicen','Daniel Casas','Sofía','Jaime Junguito'][i%10],
       entrada: toHHMM(m-transcurrido),
       prevista: sinLimite ? '' : toHHMM(m-transcurrido+dur)
     });
