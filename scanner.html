@@ -195,11 +195,17 @@ function pantallaPrep(corto, arranque, margen, segundos){
     'verde', segundos);
 }
 
-function preguntarSalida(id, despues){
+function preguntarSalida(id, despues, prevista){
   const ahora = new Date();
   // Ninguna opción pasa de la hora de cierre: a las 20:00, «una hora» son las 20:30.
   const cierreMin = (function(){ const c=CIERRE.split(':'); return (+c[0])*60 + (+c[1]); })();
   const vistos = {};
+  // Si ya tiene hora de salida por su horario, va la primera para confirmarla (Javier, 17 sept 2026)
+  let confirmar = '';
+  if (prevista){
+    vistos[prevista] = 1;
+    confirmar = '<div class="ops"><button data-f="'+prevista+'" style="font-size:clamp(22px,3.6vw,36px);padding:.7em 1.6em;background:#2e9e6a;color:#fff">✓ Sí, hasta las '+prevista+'</button></div>';
+  }
   const opciones = [60, 90, 120, 180].map(m => {
     const d = new Date(ahora.getTime() + m*60000);
     let mins = d.getHours()*60 + d.getMinutes();
@@ -213,7 +219,10 @@ function preguntarSalida(id, despues){
   }).join('');
 
   mostrar('<div class="icono">🕐</div>' +
-          '<div class="titulo" style="font-size:clamp(24px,4.8vw,46px)">¿Hasta qué hora te quedas?</div>' +
+          '<div class="titulo" style="font-size:clamp(24px,4.8vw,46px)">' +
+            (prevista ? '¿Te quedas hasta las ' + prevista + '?' : '¿Hasta qué hora te quedas?') + '</div>' +
+          confirmar +
+          (prevista ? '<div class="texto" style="margin-top:.4em">Si no, elige:</div>' : '') +
           '<div class="ops">' + opciones + '</div>' +
           '<div class="ops"><button class="sec" data-f="">No lo sé</button></div>');
 
@@ -254,7 +263,7 @@ async function fichar(codigo){
           'Fichado a las ' + horaActual() + '. Buena clase 💪', 'verde', r.espera);
 
   const conPregunta = () => r.pregunta ? preguntar(r.id, r.pregunta, gracias) : gracias();
-  const conSalida   = () => r.preguntarSalida ? preguntarSalida(r.id, conPregunta) : conPregunta();
+  const conSalida   = () => preguntarSalida(r.id, conPregunta, r.prevista || '');   // a todos (17 sept 2026)
 
   mostrar('<div class="icono">👋</div>' +
           '<div class="titulo">' + escapar(r.titulo) + '</div>' +
