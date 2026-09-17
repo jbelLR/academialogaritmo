@@ -2,7 +2,7 @@
 <html lang="es"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Panel de tiempos · Academia logaRitmo</title>
+<title>Panel de tiempos · Academia Logaritmo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
@@ -41,16 +41,6 @@
     display:flex;flex-direction:column;
     padding:calc(var(--u)*1.8) calc(var(--u)*2.4);
   }
-  /* reticula tenue de fondo, tipo sala de control */
-  .stage::before{
-    content:'';position:absolute;inset:0;pointer-events:none;z-index:0;
-    background-image:
-      linear-gradient(rgba(233,169,58,.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(233,169,58,.05) 1px, transparent 1px);
-    background-size:calc(var(--u)*4) calc(var(--u)*4);
-    -webkit-mask-image:radial-gradient(78% 72% at 50% 44%, #000 0%, transparent 100%);
-    mask-image:radial-gradient(78% 72% at 50% 44%, #000 0%, transparent 100%);
-  }
   .stage>*{position:relative;z-index:1}
 
   /* ============ cabecera ============ */
@@ -68,9 +58,12 @@
     letter-spacing:.22em;text-transform:uppercase;margin-top:calc(var(--u)*.35)
   }
 
+  .clockbox{justify-self:center;display:flex;flex-direction:column;align-items:stretch}
+  /* la única cosa que se mueve cada segundo: una raya fina bajo el reloj (Javier, 17 sept) */
+  .segs{height:calc(var(--u)*.35);margin-top:calc(var(--u)*.5);border-radius:99px;background:rgba(233,169,58,.14);overflow:hidden}
+  .segs b{display:block;height:100%;width:0;background:var(--gold);border-radius:99px;transition:width 1s linear}
   .clock{
-    justify-self:center;
-    font-size:calc(var(--u)*4.4);font-weight:700;color:var(--gold2);
+    font-size:calc(var(--u)*6);font-weight:700;color:var(--gold2);
     font-variant-numeric:tabular-nums;letter-spacing:-.01em;line-height:1;
   }
 
@@ -81,13 +74,6 @@
     text-transform:uppercase;letter-spacing:.18em;
   }
   .count b{color:var(--tx);font-size:calc(var(--u)*2.6);font-weight:800;font-variant-numeric:tabular-nums}
-  #sound{
-    background:transparent;border:1px solid var(--edge);color:var(--gold2);
-    font-family:inherit;font-size:calc(var(--u)*1);font-weight:700;
-    text-transform:uppercase;letter-spacing:.14em;
-    padding:calc(var(--u)*.7) calc(var(--u)*1.2);border-radius:calc(var(--u)*.7);cursor:pointer;
-  }
-  #sound.off{color:var(--mut);border-color:rgba(125,153,166,.3)}
   #conn{
     display:flex;align-items:center;gap:calc(var(--u)*.6);
     font-size:calc(var(--u)*1);color:var(--mut);font-weight:600;
@@ -108,66 +94,60 @@
     margin:calc(var(--u)*1.4) 0;
   }
 
+  /* Tarjeta cuadrada (Javier, 17 sept 2026): mesa · cuenta atrás · hora de salida · nombre.
+     Sin parpadeos, sin brillos: el color cambia y ya. */
   .card{
     position:relative;width:var(--card);height:var(--card);
-    display:flex;align-items:center;justify-content:center;
-  }
-  .ring{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
-  .ring .ticks{fill:none;stroke:rgba(233,169,58,.30);stroke-width:2.4;stroke-dasharray:.9 4.05}
-  .ring .track{fill:none;stroke:rgba(233,169,58,.13);stroke-width:5}
-  .ring .prog{
-    fill:none;stroke:var(--run);stroke-width:5;stroke-linecap:round;
-    stroke-dasharray:276.46;stroke-dashoffset:0;
-    transition:stroke-dashoffset .45s linear, stroke .3s;
+    border-radius:calc(var(--card)*.07);
+    background:linear-gradient(160deg, rgba(18,60,80,.85), rgba(5,22,31,.85));
+    border:2px solid var(--edge);
+    overflow:hidden;
   }
   .card .inner{
     position:absolute;inset:0;display:flex;flex-direction:column;
-    align-items:center;justify-content:center;gap:calc(var(--card)*.018);
-    padding:14% 15%;text-align:center;
+    align-items:center;justify-content:center;gap:calc(var(--card)*.03);
+    padding:9% 8% 14%;text-align:center;
   }
   .card .mesa{
-    font-size:calc(var(--card)*.095);font-weight:700;line-height:1.1;color:var(--tx);
-    text-transform:uppercase;letter-spacing:.04em;
+    font-size:calc(var(--card)*.105);font-weight:800;line-height:1.05;color:var(--gold);
+    text-transform:uppercase;letter-spacing:.03em;
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
   }
   .card .disp{
-    font-size:calc(var(--card)*.255);font-weight:700;line-height:1;
+    font-size:calc(var(--card)*.26);font-weight:700;line-height:1;
     font-variant-numeric:tabular-nums;letter-spacing:-.02em;color:var(--gold2);
   }
   .card .tag{
-    font-size:calc(var(--card)*.05);font-weight:600;text-transform:uppercase;
-    letter-spacing:.16em;color:var(--gold);opacity:.9;
+    font-size:calc(var(--card)*.065);font-weight:700;
+    letter-spacing:.04em;color:var(--tx);
   }
+  .card .nom{
+    font-size:calc(var(--card)*.06);font-weight:500;color:var(--mut);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
+  }
+  .card .barra{
+    position:absolute;left:0;right:0;bottom:0;height:calc(var(--card)*.045);
+    background:rgba(233,169,58,.14);
+  }
+  .card .barra b{display:block;height:100%;width:100%;background:var(--run);transition:width .45s linear}
 
-  /* estados: el brillo va SOLO en el aro, nunca en los numeros */
-  .card.run  .prog{stroke:url(#gRun); filter:drop-shadow(0 0 calc(var(--u)*.38) rgba(233,169,58,.32))}
-  .card.warn .prog{stroke:url(#gWarn);filter:drop-shadow(0 0 calc(var(--u)*.8) rgba(255,210,74,.6))}
-  .card.warn .disp,.card.warn .tag{color:var(--warn)}
-  .card.warn{animation:pulse 1.4s ease-in-out infinite}
-  /* fin: los 5 minutos para recoger y fichar la salida. El aro se vacia en ese margen */
-  .card.fin .prog{stroke:url(#gDone);filter:drop-shadow(0 0 calc(var(--u)*.9) rgba(255,95,82,.65))}
-  .card.fin .track{stroke:rgba(255,95,82,.16)}
-  .card.fin .ticks{stroke:rgba(255,95,82,.32)}
-  .card.fin .disp,.card.fin .mesa,.card.fin .tag{color:var(--done)}
-  .card.fin{animation:pulse 1.2s ease-in-out infinite}
-  /* pasado: ya se le fue el margen. Se ve, pero ni parpadea ni grita */
-  .card.pasado .prog{stroke:none;filter:none}
-  .card.pasado .track{stroke:rgba(185,115,108,.13)}
-  .card.pasado .ticks{stroke:rgba(185,115,108,.16)}
-  .card.pasado .mesa{color:var(--past);font-weight:600}
-  .card.pasado .disp{color:var(--past);font-size:calc(var(--card)*.185);font-weight:600}
-  .card.pasado .tag{color:var(--past);opacity:.7}
-  .card.prep .prog{stroke:#7cc4ff;filter:drop-shadow(0 0 calc(var(--u)*.5) rgba(124,196,255,.45))}
-  .card.prep .track{stroke:rgba(124,196,255,.16)}
-  .card.prep .ticks{stroke:rgba(124,196,255,.3)}
+  /* estados: solo cambia el color, nada se mueve */
+  .card.warn{border-color:rgba(255,210,74,.55)}
+  .card.warn .disp{color:var(--warn)}
+  .card.warn .barra b{background:var(--warn)}
+  .card.fin{border-color:rgba(255,95,82,.5)}
+  .card.fin .disp,.card.fin .tag{color:var(--done)}
+  .card.fin .barra b{background:var(--done)}
+  .card.pasado{border-color:rgba(185,115,108,.35)}
+  .card.pasado .disp,.card.pasado .tag{color:var(--past)}
+  .card.pasado .barra{display:none}
+  .card.prep{border-color:rgba(124,196,255,.45)}
   .card.prep .disp,.card.prep .tag{color:#7cc4ff}
-  .card.free .prog{stroke:rgba(79,214,198,.55)}
-  .card.free .ticks{stroke:rgba(79,214,198,.28)}
-  .card.free .disp{color:var(--free)}
-  .card.free .tag{color:var(--free);opacity:.8}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.86}}
+  .card.prep .barra b{background:#7cc4ff}
+  .card.free .disp,.card.free .tag{color:var(--free)}
+  .card.free .barra b{background:rgba(79,214,198,.5)}
 
-  /* el circulo entra con un fundido corto cuando el foco rota, para que no dé un salto seco */
+  /* la tarjeta entra con un fundido corto cuando el foco rota, para que no dé un salto seco */
   .card{animation:aparece .45s ease}
   @keyframes aparece{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
 
@@ -229,6 +209,7 @@
     font-variant-numeric:tabular-nums;letter-spacing:-.01em;white-space:nowrap;
   }
   .tk-ar{font-size:calc(var(--u)*1.5);color:var(--gold);line-height:1}
+  .tk-nom{font-size:calc(var(--u)*1.1);font-weight:500;color:var(--mut);white-space:nowrap}
   .tk-bar{
     position:absolute;left:calc(var(--u)*1.6);right:calc(var(--u)*1.6);
     bottom:calc(var(--u)*1.5);height:calc(var(--u)*.28);
@@ -240,7 +221,6 @@
   .tk-item.warn .tk-bar b{background:var(--warn)}
   .tk-item.fin .tk-name,.tk-item.fin .tk-time,.tk-item.fin .tk-ar{color:var(--done)}
   .tk-item.fin .tk-bar b{background:var(--done)}
-  .tk-item.fin .tk-time{animation:blink 1s steps(1,end) infinite}
   .tk-item.pasado .tk-name,.tk-item.pasado .tk-time,.tk-item.pasado .tk-ar{color:var(--past)}
   .tk-item.pasado .tk-name,.tk-item.pasado .tk-time{font-weight:600}
   .tk-item.pasado .tk-time{font-size:calc(var(--u)*2.1)}
@@ -249,7 +229,6 @@
   .tk-item.prep .tk-bar b{background:#7cc4ff}
   .tk-item.free .tk-time,.tk-item.free .tk-ar{color:var(--free)}
   .tk-item.free .tk-bar b{background:rgba(79,214,198,.5)}
-  @keyframes blink{0%,50%{opacity:1}51%,100%{opacity:.35}}
 
   /* ============ vacio ============ */
   .empty{
@@ -264,28 +243,22 @@
 </head>
 <body>
 
-<svg width="0" height="0" aria-hidden="true" style="position:absolute"><defs>
-  <linearGradient id="gRun" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f7d79b"></stop><stop offset="1" stop-color="#e9a93a"></stop></linearGradient>
-  <linearGradient id="gWarn" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe9a3"></stop><stop offset="1" stop-color="#ffc41f"></stop></linearGradient>
-  <linearGradient id="gDone" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9a90"></stop><stop offset="1" stop-color="#ff4438"></stop></linearGradient>
-</defs></svg>
 
 <div class="stage">
 
   <header>
     <div class="brand">
-      <img src="logo.png" alt="Academia logaRitmo" onerror="this.style.display='none'">
+      <img src="logo.png" alt="Academia Logaritmo" onerror="this.style.display='none'">
       <div>
         <div class="t1">En clase ahora</div>
         <div class="t2">Panel de tiempos</div>
       </div>
     </div>
 
-    <div class="clock" id="reloj">--:--:--</div>
+    <div class="clockbox"><div class="clock" id="reloj">--:--</div><div class="segs"><b id="segs"></b></div></div>
 
     <div class="meta">
       <div class="count"><b id="nActivos">0</b><span>en clase</span></div>
-      <button id="sound">&#9834; Sonido</button>
       <div id="conn" class=""><span class="dot"></span><span id="connTxt">En vivo</span></div>
     </div>
   </header>
@@ -306,7 +279,7 @@
   <div class="empty on" id="empty">
     <img src="logo.png" alt="" onerror="this.style.display='none'">
     <div class="big">No hay nadie fichado ahora mismo</div>
-    <div class="sub">Cuando un alumno fiche la entrada, su mesa aparecerá aquí con la cuenta atrás.</div>
+    <div class="sub">Cuando un alumno fiche la entrada, aquí saldrá su mesa con la cuenta atrás.</div>
   </div>
 
 </div>
@@ -320,19 +293,18 @@ var BACKEND_URL = "https://script.google.com/macros/s/AKfycbxLbfrRn5U4dxrv2pc7D8
    El backend nuevo no pide token, asi que no hay nada que esconder aqui. */
 var POLL_MS     = 10000;             // cada cuanto pregunta al backend quien esta en clase
 var AVISO_SEG   = 300;               // ultimos 5 min: el aro avisa en amarillo
-var CIRC        = 276.46;            // circunferencia del aro (2*PI*44)
 
-/* --- tamano de los circulos (Javier, 3 sept 2026) ---
+/* --- tamano de las tarjetas (Javier, 3 sept 2026) ---
    Antes el tope era 40 unidades: con UN solo alumno el circulo se comia la tele entera.
    CARD_MAX es el lado maximo en unidades del lienzo (100 = ancho completo). */
 var CARD_MAX    = 21;                // sube este numero si los quieres mas grandes
 var CARD_MIN_PX = 60;
 
 /* --- cuanta gente se ve en grande --- */
-var FOCO_MAX    = 6;                 // hasta aqui, todos en circulos (sin banda)
+var FOCO_MAX    = 6;                 // hasta aqui, todos en tarjetas (sin banda)
 var FOCO_N      = 3;                 // a partir de ahi, SOLO 3 en grande + la banda rodante
 var FOCO_FIN_MAX  = 2;               // cuantos de esos 3 pueden ser mesas que acaban de terminar
-var ROTA_MS     = 12000;             // cada cuanto rotan los circulos que NO son urgentes
+var ROTA_MS     = 12000;             // cada cuanto rotan las tarjetas que NO son urgentes
 
 var MARGEN_SALIDA = 300;             // 5 min para recoger y fichar la salida; despues, tiempo de mas
 
@@ -361,45 +333,16 @@ var elTicker = document.getElementById('ticker');
 var elLane   = document.getElementById('tkLane');
 var elEmpty  = document.getElementById('empty');
 var elReloj  = document.getElementById('reloj');
+var elSegs   = document.getElementById('segs');
 var elN      = document.getElementById('nActivos');
 var elRota   = document.getElementById('rota');
 var conn     = document.getElementById('conn');
 var connTxt  = document.getElementById('connTxt');
 
-/* ---- sonido (alarma sintetizada, sin archivos) ---- */
-var soundOn = true;
-var btnSound = document.getElementById('sound');
-btnSound.addEventListener('click', function(){
-  soundOn = !soundOn;
-  btnSound.classList.toggle('off', !soundOn);
-  btnSound.innerHTML = soundOn ? '&#9834; Sonido' : '&#9834; Silencio';
-  if (soundOn) desbloquearAudio();
-});
-var audioCtx = null;
-function desbloquearAudio(){
-  try{ audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
-       if(audioCtx.resume) audioCtx.resume(); }catch(e){}
-}
-function beep(){
-  if(!soundOn) return;
-  try{
-    desbloquearAudio();
-    var now = audioCtx.currentTime;
-    [0,0.18,0.36].forEach(function(off,i){
-      var osc=audioCtx.createOscillator(), g=audioCtx.createGain();
-      osc.type='sine'; osc.frequency.value=880+i*110;
-      g.gain.setValueAtTime(0,now+off);
-      g.gain.linearRampToValueAtTime(0.3,now+off+0.02);
-      g.gain.exponentialRampToValueAtTime(0.001,now+off+0.16);
-      osc.connect(g); g.connect(audioCtx.destination);
-      osc.start(now+off); osc.stop(now+off+0.16);
-    });
-  }catch(e){}
-}
-window.addEventListener('pointerdown', desbloquearAudio, {once:true});
+/* Sin sonido (Javier, 17 sept 2026): el aula tiene que estar en silencio. */
 
 /* ---- estado ----
-   la clave interna es la ref (ID del alumno) y NUNCA se muestra: solo se ve la mesa */
+   la clave interna es la ref (ID del alumno) y NUNCA se muestra. Se ve la mesa y, en pequeño, el nombre de pila */
 var sesiones = {};
 var vista = { modo:null, sigCards:'', sigTk:'', cards:{}, tk:{} };
 var ultimaOk = 0;
@@ -477,6 +420,7 @@ function aplicar(lista){
     vistos[a.ref] = true;
     var s = sesiones[a.ref] || (sesiones[a.ref] = {});
     s.mesa     = a.mesa || 'Sin mesa';
+    s.nombre   = a.nombre || '';
     s.entrada  = a.entrada || '';
     s.prevista = tope(a.prevista || '');     // nunca mas tarde de CIERRE_HHMM
     s.mode     = s.prevista ? 'countdown' : 'countup';
@@ -501,21 +445,18 @@ function makeCard(){
   var c = document.createElement('div');
   c.className = 'card';
   c.innerHTML =
-    '<svg class="ring" viewBox="0 0 100 100">'+
-      '<circle class="ticks" cx="50" cy="50" r="47.2"></circle>'+
-      '<circle class="track" cx="50" cy="50" r="44"></circle>'+
-      '<circle class="prog"  cx="50" cy="50" r="44"></circle>'+
-    '</svg>'+
-    '<div class="inner"><div class="mesa"></div><div class="disp">--:--</div><div class="tag"></div></div>';
-  return {root:c, prog:c.querySelector('.prog'), mesa:c.querySelector('.mesa'),
-          disp:c.querySelector('.disp'), tag:c.querySelector('.tag')};
+    '<div class="inner"><div class="mesa"></div><div class="disp">--:--</div>'+
+    '<div class="tag"></div><div class="nom"></div></div>'+
+    '<i class="barra"><b></b></i>';
+  return {root:c, mesa:c.querySelector('.mesa'), disp:c.querySelector('.disp'),
+          tag:c.querySelector('.tag'), nom:c.querySelector('.nom'), bar:c.querySelector('.barra b')};
 }
 function makeTkItem(){
   var d = document.createElement('div');
   d.className = 'tk-item';
-  d.innerHTML = '<span class="tk-name"></span><span class="tk-time">--:--</span>'+
+  d.innerHTML = '<span class="tk-name"></span><span class="tk-nom"></span><span class="tk-time">--:--</span>'+
                 '<span class="tk-ar">&#9662;</span><i class="tk-bar"><b></b></i>';
-  return {root:d, name:d.querySelector('.tk-name'), time:d.querySelector('.tk-time'),
+  return {root:d, name:d.querySelector('.tk-name'), nom:d.querySelector('.tk-nom'), time:d.querySelector('.tk-time'),
           ar:d.querySelector('.tk-ar'), bar:d.querySelector('.tk-bar b')};
 }
 
@@ -593,7 +534,7 @@ function render(){
 
   /* aviso de rotacion, para que se entienda que los circulos van pasando */
   if(rotando > 0){
-    elRota.textContent = 'Los círculos van rotando entre las ' + n + ' mesas';
+    elRota.textContent = 'Las tarjetas van rotando entre las ' + n + ' mesas';
     elRota.classList.remove('hidden');
   }else{
     elRota.classList.add('hidden');
@@ -638,6 +579,7 @@ function render(){
         orden.forEach(function(ref){
           var it = makeTkItem();
           it.name.textContent = mesaCorta(sesiones[ref].mesa);
+          it.nom.textContent  = sesiones[ref].nombre;
           run.appendChild(it.root);
           (vista.tk[ref] = vista.tk[ref] || []).push(it);
         });
@@ -670,7 +612,10 @@ function ajustarVelocidad(){
 /* ---- latido: actualiza textos, aros y barras ---- */
 function tick(){
   var d = new Date();
-  elReloj.textContent = pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+  elReloj.textContent = pad(d.getHours())+':'+pad(d.getMinutes());
+  var sg = d.getSeconds();
+  elSegs.style.transition = sg === 0 ? 'none' : '';
+  elSegs.style.width = (sg/59*100).toFixed(1)+'%';
 
   var nowMs = Date.now();
   Object.keys(sesiones).forEach(function(ref){
@@ -678,27 +623,19 @@ function tick(){
     var st = estado(s, nowMs);
     var texto, etiqueta;
 
+    /* Sin cuenta atrás (Javier, 17 sept 2026): en grande, la HORA DE SALIDA.
+       La barra de abajo ya enseña cuánto ha pasado. */
+    texto = s.prevista || '—';
     if(st.cls==='prep'){
-      /* los primeros minutos: que saque el material, la clase aun no ha empezado */
-      texto = fmt(st.rem);
       etiqueta = 'Saca el material';
     }else if(st.cls==='free'){
-      texto = fmt((nowMs - s.startMs)/1000);
-      etiqueta = 'Sin límite';
+      etiqueta = 'Sin hora de salida';
     }else if(st.cls==='fin'){
-      /* durante el margen, el numero grande es lo que le queda para fichar la salida */
-      texto = fmt(MARGEN_SALIDA + st.rem);
       etiqueta = 'Ficha la salida';
-      if(!s.beeped){ s.beeped = true; beep(); }
     }else if(st.cls==='pasado'){
-      /* a partir de aqui, el reloj cuenta en negativo: cuanto se ha pasado */
-      texto = '−'+fmt(-st.rem);
-      etiqueta = 'De más';
-      s.beeped = true;
+      etiqueta = 'Ya es la hora';
     }else{
-      texto = fmt(st.rem);
-      etiqueta = 'Hasta las '+s.prevista;
-      if(st.rem > 2) s.beeped = false;
+      etiqueta = 'Hora de salida';
     }
 
     var c = vista.cards[ref];
@@ -707,7 +644,8 @@ function tick(){
       c.mesa.textContent = mesaCorta(s.mesa);
       c.disp.textContent = texto;
       c.tag.textContent  = etiqueta;
-      c.prog.style.strokeDashoffset = (CIRC*(1-st.frac)).toFixed(1);
+      c.nom.textContent  = s.nombre;
+      c.bar.style.width  = (st.frac*100).toFixed(1)+'%';
     }
     var items = vista.tk[ref];
     if(items) items.forEach(function(it){
@@ -781,7 +719,8 @@ function demo(){
     var sinLimite = (i>0 && i%9===0);
     lista.push({
       ref:'A'+pad(i),
-      mesa:'Mesa '+NOMBRES[i%NOMBRES.length],
+      mesa:NOMBRES[i%NOMBRES.length],
+      nombre:['Lucía','Pablo','Sofía','Jaime','Carmen','Juan','Elena','Daniel'][i%8],
       entrada: toHHMM(m-transcurrido),
       prevista: sinLimite ? '' : toHHMM(m-transcurrido+dur)
     });
