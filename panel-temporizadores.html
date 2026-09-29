@@ -743,7 +743,8 @@ function demo(){
     lista.push({
       ref:'A'+pad(i),
       mesa:NOMBRES[i%NOMBRES.length],
-      nombre:['Lucía Pérez','Pablo Molero','Sofía Quesada','Jaime Fernández','Carmen Encina','Juan Encina','Elena Vicen','Daniel Casas','Sofía','Jaime Junguito'][i%10],
+      /* nombres INVENTADOS: este archivo es público en GitHub (29 sept 2026) */
+      nombre:['Ana Prueba','Luis Ejemplo','Marta Demo','Pedro Ficticio','Rosa Inventada','Hugo Modelo','Irene Muestra','Tomás Ensayo','Ana Ejemplo','Luis Prueba'][i%10],
       entrada: toHHMM(m-transcurrido),
       prevista: sinLimite ? '' : toHHMM(m-transcurrido+dur)
     });
