@@ -347,7 +347,7 @@ var connTxt  = document.getElementById('connTxt');
 /* ---- estado ----
    la clave interna es la ref (ID del alumno) y NUNCA se muestra.
    29 sept 2026: en grande, el PERSONAJE de la mesa que le tocó al fichar («Newton»);
-   debajo, muy pequeño, nombre y primer apellido. Quien no tiene mesa (fichado por
+   debajo, muy pequeño, nombre e inicial del apellido («Elena G.»). Quien no tiene mesa (fichado por
    el bot o el tablero) sale con su nombre de pila en grande, como antes. */
 var sesiones = {};
 var vista = { modo:null, sigCards:'', sigTk:'', cards:{}, tk:{} };
@@ -427,7 +427,7 @@ function aplicar(lista){
     var s = sesiones[a.ref] || (sesiones[a.ref] = {});
     s.mesa     = a.mesa || '';
     s.nombre   = a.nombre || '';
-    s.alumno   = a.alumno || String(a.nombre||'').trim().split(/\s+/).slice(0,2).join(' ');
+    s.alumno   = a.alumno || (function(p){ return p[0] + (p[1] ? ' '+p[1].charAt(0).toUpperCase()+'.' : ''); })(String(a.nombre||'').trim().split(/\s+/));
     s.entrada  = a.entrada || '';
     s.prevista = tope(a.prevista || '');     // nunca mas tarde de CIERRE_HHMM
     s.mode     = s.prevista ? 'countdown' : 'countup';
