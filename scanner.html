@@ -77,18 +77,33 @@
   .mesa i{font-style:normal;font-size:clamp(20px,3.6vw,38px);font-weight:700;opacity:.75}
   .sinmesa{background:#5C420B;border-radius:16px;padding:1.6vh 4vw;
     font-size:clamp(17px,3vw,28px);font-weight:700}
-  /* plano del aula al lado (29 sept 2026): su mesa encendida y «AQUÍ» */
-  .dos{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:4vw;align-items:center;width:100%;height:100%}
-  .izq{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.6vh;min-width:0}
-  .der{display:flex;align-items:center;justify-content:center;min-width:0;height:100%}
-  .der svg{width:100%;height:auto;max-height:88vh}
+  /* plano del aula al lado: su mesa encendida y «AQUÍ». Se ajusta SIEMPRE al alto
+     visible de la tablet (30 sept 2026: en la tablet no se veía la parte de abajo). */
+  #panel{padding:3vh 3vw}
+  .dos{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:3vw;align-items:center;width:100%;height:100%;min-height:0}
+  .dos.elegir{grid-template-columns:minmax(0,.8fr) minmax(0,1.4fr)}
+  .izq{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2.2vh;min-width:0}
+  .der{display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;height:100%}
+  .der svg{width:100%;height:100%;display:block}
   .dos .titulo{font-size:clamp(26px,4.6vw,56px)}
   .dos .texto{font-size:clamp(15px,2.3vw,26px)}
   .dos .mesa b{font-size:clamp(36px,6.4vw,80px)}
   @media (orientation:portrait){
-    .dos{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:2vh}
-    .der svg{max-height:58vh}
+    .dos,.dos.elegir{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr);gap:1.5vh}
+    .izq{gap:1vh}
+    .dos .icono{display:none}
   }
+  /* «Pregunta 1 de 2» */
+  .pasos{display:flex;align-items:center;gap:12px;font-size:clamp(13px,1.8vw,18px);font-weight:800;
+    letter-spacing:.18em;text-transform:uppercase;color:#E9A93A}
+  .pasos b{display:flex;gap:6px}
+  .pasos i{width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.25)}
+  .pasos i.ahora{background:#E9A93A;box-shadow:0 0 10px rgba(233,169,58,.8)}
+  .pasos i.hecho{background:#2e9e6a}
+  .saludo{font-size:clamp(18px,2.8vw,28px);font-weight:700}
+  .saludo span{display:block;font-size:.65em;font-weight:500;opacity:.75;margin-top:.3em}
+  button.si{font-size:clamp(22px,3.8vw,38px);padding:.7em 1.6em;background:#2e9e6a;color:#fff}
+  .horas button small{display:block;opacity:.65;font-weight:600;font-size:.6em}
   .pl{touch-action:manipulation}
   .pl text{font-size:14px;font-weight:900;text-anchor:middle;fill:#3a2206;letter-spacing:-.01em;pointer-events:none}
   .pl-otra rect{fill:rgba(5,22,36,.45)}
@@ -205,7 +220,7 @@ const AULA_IMG = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAkGBwg
 function planoAula(modo, mesas, opc){
   opc = opc || {};
   const info = {};
-  (mesas || []).forEach(m => { info[m[0]] = {nombre:m[1], zona:m[2], libre:m[3]}; });
+  (mesas || []).forEach(m => { info[m[0]] = {nombre:m[1], zona:m[2], libre:m[3], puede:m[4]}; });
   let capas = '', marca = '';
   Object.keys(SILLA).forEach(k => {
     const n = +k, r = SILLA[k], x = r[0], y = r[1], w = r[2]-r[0], h = r[3]-r[1];
@@ -217,7 +232,7 @@ function planoAula(modo, mesas, opc){
     const txt = lin.map((t,i) => '<text x="' + cx + '" y="' + (cy + (lin.length>1 ? -3 + i*15 : 5)) + '"' +
                  (t.length > 8 ? ' textLength="' + (w-8) + '" lengthAdjust="spacingAndGlyphs"' : '') + '>' + escapar(t) + '</text>').join('');
     if (modo === 'elegir'){
-      const puede = im.libre && im.zona === opc.zona;
+      const puede = im.libre && im.puede;   // el Codigo.gs decide (días de letras, reserva…)
       capas += puede
         ? '<g class="pl-pick" data-n="' + n + '"><rect x="' + (x-4) + '" y="' + (y-4) + '" width="' + (w+8) + '" height="' + (h+8) + '" rx="8"/>' + txt + '</g>'
         : '<g class="pl-no"><rect x="' + (x-3) + '" y="' + (y-3) + '" width="' + (w+6) + '" height="' + (h+6) + '" rx="6"/>' + txt + '</g>';
@@ -237,55 +252,6 @@ function planoAula(modo, mesas, opc){
          '<image href="' + AULA_IMG + '" width="776" height="1040"/>' + capas + marca + '</svg>';
 }
 function planoSVG(suya, mesas){ return planoAula('aqui', mesas, {suya: suya}); }
-
-/* ─────────── elegir silla (30 sept 2026) ───────────
-   Pulsa una de las que brillan. Si en 45 s no ha pulsado ninguna, se le da una al azar. */
-const TIEMPO_ELEGIR = 45;
-function pantallaElegir(r, corto, despues, aviso){
-  clearTimeout(temporizador);
-  planoActual = '';
-  const zonaTxt = r.zona === 'letras' ? 'letras' : 'ciencias';
-  panel.className = 'on verde';
-  panel.innerHTML = '<div class="dos"><div class="izq">' +
-      '<div class="icono">🪑</div>' +
-      '<div class="titulo">' + (corto ? '¡Hola, ' + escapar(corto) + '!' : '¡Hola!') + '</div>' +
-      '<div class="mesa"><small>Elige tu mesa</small><b style="font-size:clamp(26px,4vw,48px)">Pulsa una que brille</b></div>' +
-      '<div class="texto">' + (aviso ? '⚠️ ' + escapar(aviso) : 'Son las que están libres de ' + zonaTxt + '.') + '</div>' +
-      '<div class="texto" style="opacity:.7;font-size:clamp(13px,1.8vw,18px)">' + escapar(r.texto || '') + '</div>' +
-      '<div class="barra"><span id="bar"></span></div>' +
-    '</div><div class="der">' + planoAula('elegir', r.mesas, {zona: r.zona}) + '</div></div>';
-  const bar = $('#bar');
-  if (bar) bar.animate([{transform:'scaleX(1)'},{transform:'scaleX(0)'}],
-                       {duration: TIEMPO_ELEGIR*1000, fill:'forwards', easing:'linear'});
-  let hecho = false;
-  const elegir = async (n) => {
-    if (hecho) return; hecho = true;
-    clearTimeout(temporizador);
-    let res;
-    try { res = await llamar({accion:'mesa', id:r.id, n:n}); } catch(e){ res = null; }
-    if (res && res.ok && res.mesa){
-      r.mesa = res.mesa;
-      planoActual = planoSVG(res.mesa, r.mesas);
-      mostrar('<div class="icono">✅</div><div class="titulo">¡Hecho!</div>' + htmlMesa(r) +
-              '<div class="ops"><button id="seguir">Seguir</button></div>', 'verde');
-      $('#seguir').onclick = despues;
-      temporizador = setTimeout(despues, 5000);
-    } else if (res && res.ocupada){
-      if (res.mesas) r.mesas = res.mesas;
-      pantallaElegir(r, corto, despues, res.texto);        // otro la ha cogido: que elija otra
-    } else {
-      r.mesaAviso = (res && res.error) || 'No he podido apuntar la mesa. Díselo a Javier.';
-      mostrar('<div class="icono">😕</div>' + htmlMesa(r) +
-              '<div class="ops"><button id="seguir">Seguir</button></div>', 'ambar');
-      $('#seguir').onclick = despues;
-      temporizador = setTimeout(despues, 6000);
-    }
-  };
-  panel.querySelectorAll('.pl-pick').forEach(g => {
-    g.addEventListener('click', () => { g.classList.add('tocada'); elegir(+g.dataset.n); });
-  });
-  temporizador = setTimeout(() => elegir(0), TIEMPO_ELEGIR*1000);   // no ha elegido: una al azar
-}
 
 function pantallaLeyendo(){
   mostrar('<div class="spin"></div>' +
@@ -329,90 +295,139 @@ function pantallaFinal(icono, titulo, texto, clase, segundos, mesa){
   temporizador = setTimeout(ocultar, s*1000);
 }
 
-/* ───────────────────────── preguntas ───────────────────────── */
-function preguntar(id, preg, despues){
+/* ═════════════════════════ EL FLUJO (30 sept 2026) ═════════════════════════
+   Tres pasos y nada más (Javier):
+     1. acerca el móvil
+     2. PREGUNTA 1 de 2 — ¿hasta qué hora te quedas?  (confirmar la suya o tocar otra)
+     3. PREGUNTA 2 de 2 — elige tu mesa               (pulsar una silla que brille)
+   y una pantalla final: «Tu mesa: X» con el AQUÍ, que vuelve sola a la cámara.
+   Si Javier ha puesto una pregunta en la pestaña «Preguntas», va como una más. */
+
+const TIEMPO_HORA   = 30;   // s para contestar la hora; si no, «no lo sé»
+const TIEMPO_ELEGIR = 45;   // s para elegir mesa; si no, una libre al azar
+
+function htmlPaso(k, total){
+  let puntos = '';
+  for (let i = 1; i <= total; i++) puntos += '<i class="' + (i < k ? 'hecho' : i === k ? 'ahora' : '') + '"></i>';
+  return '<div class="pasos"><span>Pregunta ' + k + ' de ' + total + '</span><b>' + puntos + '</b></div>';
+}
+function barraTiempo(seg){
+  const bar = $('#bar');
+  if (bar) bar.animate([{transform:'scaleX(1)'},{transform:'scaleX(0)'}],
+                       {duration: seg*1000, fill:'forwards', easing:'linear'});
+}
+
+/* ── pregunta: la hora ── */
+function preguntarSalida(r, corto, k, total, despues){
+  clearTimeout(temporizador);
+  planoActual = '';
+  const prevista = r.prevista || '';
+  const cierreMin = (function(){ const c=CIERRE.split(':'); return (+c[0])*60 + (+c[1]); })();
+  const vistos = {};
+  let confirmar = '';
+  if (prevista){
+    vistos[prevista] = 1;
+    confirmar = '<button class="si" data-f="'+prevista+'">✓ Sí, hasta las '+prevista+'</button>';
+  }
+  const ahora = new Date();
+  const opciones = [60, 90, 120, 180].map(m => {
+    const d = new Date(ahora.getTime() + m*60000);
+    let mins = d.getHours()*60 + d.getMinutes(), recortada = false;
+    if (mins > cierreMin){ mins = cierreMin; recortada = true; }
+    const hm = String(Math.floor(mins/60)).padStart(2,'0')+':'+String(mins%60).padStart(2,'0');
+    if (vistos[hm]) return '';
+    vistos[hm] = 1;
+    const et = recortada ? 'Hasta cerrar' : (m === 60 ? '1 hora' : m === 90 ? '1 h y media' : (m/60) + ' horas');
+    return '<button data-f="'+hm+'">'+et+'<small>hasta '+hm+'</small></button>';
+  }).join('');
+  mostrar(htmlPaso(k, total) +
+          '<div class="saludo">' + (corto ? '¡Hola, ' + escapar(corto) + '!' : '¡Hola!') +
+            (r.texto ? ' <span>' + escapar(r.texto) + '</span>' : '') + '</div>' +
+          '<div class="titulo">' + (prevista ? '¿Te quedas hasta las ' + prevista + '?' : '¿Hasta qué hora te quedas?') + '</div>' +
+          (confirmar ? '<div class="ops">' + confirmar + '</div><div class="texto">Si no, toca otra:</div>' : '') +
+          '<div class="ops horas">' + opciones + '<button class="sec" data-f="">No lo sé</button></div>' +
+          '<div class="barra"><span id="bar"></span></div>', 'verde');
+  barraTiempo(TIEMPO_HORA);
+  let hecho = false;
+  const fin = f => {
+    if (hecho) return; hecho = true;
+    clearTimeout(temporizador);
+    if (f) llamar({accion:'salida', id:r.id, fin:f}).catch(()=>{});
+    despues();
+  };
+  panel.querySelectorAll('button[data-f]').forEach(b => { b.onclick = () => fin(b.dataset.f); });
+  temporizador = setTimeout(() => fin(''), TIEMPO_HORA*1000);
+}
+
+/* ── pregunta: la mesa ── */
+function pantallaElegir(r, k, total, despues, aviso){
+  clearTimeout(temporizador);
+  planoActual = '';
+  panel.className = 'on verde';
+  panel.innerHTML = '<div class="dos elegir"><div class="izq">' +
+      htmlPaso(k, total) +
+      '<div class="titulo">Elige tu mesa</div>' +
+      '<div class="texto">' + (aviso ? '⚠️ ' + escapar(aviso) : 'Toca una de las que <b>brillan</b>: están libres.') + '</div>' +
+      '<div class="barra"><span id="bar"></span></div>' +
+    '</div><div class="der">' + planoAula('elegir', r.mesas) + '</div></div>';
+  barraTiempo(TIEMPO_ELEGIR);
+  let hecho = false;
+  const elegir = async (n) => {
+    if (hecho) return; hecho = true;
+    clearTimeout(temporizador);
+    let res;
+    try { res = await llamar({accion:'mesa', id:r.id, n:n}); } catch(e){ res = null; }
+    if (res && res.ok && res.mesa){ r.mesa = res.mesa; despues(); }
+    else if (res && res.ocupada){
+      if (res.mesas) r.mesas = res.mesas;
+      pantallaElegir(r, k, total, despues, res.texto);      // otro la ha cogido: que elija otra
+    } else {
+      r.mesaAviso = (res && res.error) || 'No he podido apuntar la mesa. Díselo a Javier.';
+      despues();
+    }
+  };
+  panel.querySelectorAll('.pl-pick').forEach(g => {
+    g.addEventListener('click', () => { g.classList.add('tocada'); elegir(+g.dataset.n); });
+  });
+  temporizador = setTimeout(() => elegir(0), TIEMPO_ELEGIR*1000);
+}
+
+/* ── pregunta de Javier (pestaña «Preguntas»), si la hay ── */
+function preguntar(r, k, total, despues){
+  clearTimeout(temporizador);
+  planoActual = '';
+  const preg = r.pregunta;
   let ops = '';
   if (preg.opciones && preg.opciones.length){
-    ops = preg.opciones.map((o,i) =>
-      '<button data-r="'+i+'">'+escapar(o)+'</button>').join('');
+    ops = '<div class="ops">' + preg.opciones.map((o,i) => '<button data-r="'+i+'">'+escapar(o)+'</button>').join('') + '</div>';
   } else {
     ops = '<input type="text" id="libre" autocomplete="off" placeholder="Escribe aquí…">' +
-          '<div class="ops" style="width:100%"><button data-r="libre">Enviar</button>' +
-          '<button class="sec" data-r="salta">Ahora no</button></div>';
+          '<div class="ops"><button data-r="libre">Enviar</button></div>';
   }
-  mostrar('<div class="icono">💬</div>' +
-          '<div class="titulo" style="font-size:clamp(22px,4.4vw,42px)">' + escapar(preg.texto) + '</div>' +
-          '<div class="ops">' + ops + '</div>' +
-          (preg.opciones && preg.opciones.length
-            ? '<div class="ops"><button class="sec" data-r="salta">Ahora no</button></div>' : ''));
-
+  mostrar(htmlPaso(k, total) + '<div class="titulo">' + escapar(preg.texto) + '</div>' + ops +
+          '<div class="ops"><button class="sec" data-r="salta">Ahora no</button></div>', 'verde');
   panel.querySelectorAll('button[data-r]').forEach(b => {
     b.onclick = () => {
       const v = b.dataset.r;
       let resp = null;
-      if (v === 'salta') resp = null;
-      else if (v === 'libre') resp = ($('#libre') || {}).value || '';
-      else resp = preg.opciones[Number(v)];
-      if (resp !== null && String(resp).trim()){
-        llamar({accion:'responder', id:id, pregunta:preg.texto, respuesta:resp}).catch(()=>{});
-      }
+      if (v === 'libre') resp = ($('#libre') || {}).value || '';
+      else if (v !== 'salta') resp = preg.opciones[Number(v)];
+      if (resp !== null && String(resp).trim())
+        llamar({accion:'responder', id:r.id, pregunta:preg.texto, respuesta:resp}).catch(()=>{});
       despues();
     };
   });
 }
 
-/* ─────────── ¿hasta qué hora te quedas? (solo si no estaba apuntado) ─────────── */
-/* Los 5 minutos para sentarse y sacar el material. No es una cuenta atrás con
-   la que haya que quedarse mirando: dice la hora a la que empieza la clase y
-   vuelve solo a la cámara. (Javier, 9 sept 2026.) */
-function pantallaPrep(corto, arranque, margen, segundos, mesa){
-  pantallaFinal('📚',
-    corto ? '¡Vamos, ' + escapar(corto) + '!' : '¡Vamos!',
-    'Tienes <b>' + margen + ' minutos</b> para sentarte y sacar los deberes y el material.' +
-    '<br>La clase empieza a las <b>' + escapar(arranque) + '</b>.',
-    'verde', segundos, mesa);
+/* ── final: su mesa con el AQUÍ, y a sentarse ── */
+function pantallaListo(r, corto){
+  planoActual = (r.mesa && SILLA[r.mesa.n]) ? planoSVG(r.mesa, r.mesas) : '';
+  pantallaFinal('✅', corto ? '¡Listo, ' + escapar(corto) + '!' : '¡Listo!',
+    r.arranque ? 'Tienes <b>' + (r.margen || 5) + ' minutos</b> para sacar el material. La clase empieza a las <b>' + escapar(r.arranque) + '</b>.'
+               : 'Fichado a las ' + horaActual() + '. Buena clase 💪',
+    'verde', 12, htmlMesa(r));
 }
 
-function preguntarSalida(id, despues, prevista){
-  const ahora = new Date();
-  // Ninguna opción pasa de la hora de cierre: a las 20:00, «una hora» son las 20:30.
-  const cierreMin = (function(){ const c=CIERRE.split(':'); return (+c[0])*60 + (+c[1]); })();
-  const vistos = {};
-  // Si ya tiene hora de salida por su horario, va la primera para confirmarla (Javier, 17 sept 2026)
-  let confirmar = '';
-  if (prevista){
-    vistos[prevista] = 1;
-    confirmar = '<div class="ops"><button data-f="'+prevista+'" style="font-size:clamp(22px,3.6vw,36px);padding:.7em 1.6em;background:#2e9e6a;color:#fff">✓ Sí, hasta las '+prevista+'</button></div>';
-  }
-  const opciones = [60, 90, 120, 180].map(m => {
-    const d = new Date(ahora.getTime() + m*60000);
-    let mins = d.getHours()*60 + d.getMinutes();
-    let recortada = false;
-    if (mins > cierreMin){ mins = cierreMin; recortada = true; }
-    const hm = String(Math.floor(mins/60)).padStart(2,'0')+':'+String(mins%60).padStart(2,'0');
-    if (vistos[hm]) return '';                 // dos opciones que caen en la misma hora: sobra una
-    vistos[hm] = 1;
-    const et = recortada ? 'Hasta cerrar' : (m < 60 ? m+' min' : (m/60) + (m===60 ? ' hora' : ' horas'));
-    return '<button data-f="'+hm+'">'+et+'<br><small style="opacity:.65;font-weight:600">hasta '+hm+'</small></button>';
-  }).join('');
-
-  mostrar('<div class="icono">🕐</div>' +
-          '<div class="titulo" style="font-size:clamp(24px,4.8vw,46px)">' +
-            (prevista ? '¿Te quedas hasta las ' + prevista + '?' : '¿Hasta qué hora te quedas?') + '</div>' +
-          confirmar +
-          (prevista ? '<div class="texto" style="margin-top:.4em">Si no, elige:</div>' : '') +
-          '<div class="ops">' + opciones + '</div>' +
-          '<div class="ops"><button class="sec" data-f="">No lo sé</button></div>');
-
-  panel.querySelectorAll('button[data-f]').forEach(b => {
-    b.onclick = () => {
-      if (b.dataset.f) llamar({accion:'salida', id:id, fin:b.dataset.f}).catch(()=>{});
-      despues();
-    };
-  });
-}
-
-/* ───────────────────────── el flujo entero ───────────────────────── */
 async function fichar(codigo){
   ocupado = true;
   planoActual = '';
@@ -426,40 +441,22 @@ async function fichar(codigo){
   }
   if (!r || !r.ok){ pantallaError((r && r.error) || 'Algo ha fallado.'); return; }
 
-  // Si le ha tocado mesa y sabemos dónde está, el plano le acompaña hasta que se sienta.
-  planoActual = (r.mesa && SITIO[r.mesa.n]) ? planoSVG(r.mesa, r.mesas) : '';
-
   if (r.tipo === 'repetido'){
+    planoActual = (r.mesa && SILLA[r.mesa.n]) ? planoSVG(r.mesa, r.mesas) : '';
     pantallaFinal('👍', r.titulo, r.texto, 'verde', r.espera, htmlMesa(r)); return;
   }
   if (r.tipo === 'salida'){
     pantallaFinal('👋', r.titulo, r.texto, 'verde', r.espera); return;
   }
 
-  // Entrada: saludo → (hora de salida) → (pregunta) → gracias
+  // ENTRADA: hora → (mesa) → (pregunta de Javier) → listo
   const corto = (r.nombre || '').trim().split(/\s+/)[0] || '';
-  const mesa = htmlMesa(r);
-  // la mesa se repite al final (ya elegida), que es lo que ve al irse a sentar
-  const gracias = () => r.arranque
-      ? pantallaPrep(corto, r.arranque, r.margen || 5, r.espera, htmlMesa(r))
-      : pantallaFinal('✅',
-          corto ? '¡Gracias, ' + corto + '!' : '¡Gracias!',
-          'Fichado a las ' + horaActual() + '. Buena clase 💪', 'verde', r.espera, htmlMesa(r));
-
-  const conPregunta = () => r.pregunta ? preguntar(r.id, r.pregunta, gracias) : gracias();
-  const conSalida   = () => preguntarSalida(r.id, conPregunta, r.prevista || '');   // a todos (17 sept 2026)
-
-  // 30 sept 2026: si tiene que elegir mesa, el saludo va en la pantalla de elegir
-  if (r.elegir){ pantallaElegir(r, corto, conSalida); return; }
-
-  mostrar('<div class="icono">👋</div>' +
-          '<div class="titulo">' + escapar(r.titulo) + '</div>' +
-          mesa +
-          '<div class="texto">' + escapar(r.texto) + '</div>' +
-          '<div class="ops"><button id="seguir">Seguir</button></div>', 'verde');
-  $('#seguir').onclick = conSalida;
-  clearTimeout(temporizador);
-  temporizador = setTimeout(conSalida, 5000);   // si no toca nada, sigue solo
+  const total = 1 + (r.elegir ? 1 : 0) + (r.pregunta ? 1 : 0);
+  let k = 0;
+  const listo      = () => pantallaListo(r, corto);
+  const conPregunta = () => r.pregunta ? preguntar(r, ++k, total, listo) : listo();
+  const conMesa     = () => r.elegir ? pantallaElegir(r, ++k, total, conPregunta) : conPregunta();
+  preguntarSalida(r, corto, ++k, total, conMesa);
 }
 
 function horaActual(){
