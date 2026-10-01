@@ -28,7 +28,7 @@
   #reposo{position:fixed;inset:0;display:flex;flex-direction:column;
     align-items:center;justify-content:space-between;padding:5vh 4vw;pointer-events:none}
   #reposo h1{font-size:clamp(22px,4.4vw,44px);font-weight:800;letter-spacing:-.5px;text-align:center}
-  #reposo p{font-size:clamp(15px,2.4vw,24px);opacity:.85;text-align:center;max-width:22ch}
+  #reposo p{font-size:clamp(15px,2.4vw,24px);opacity:.85;text-align:center;max-width:26ch;margin:0 auto}
   /* cabecera (29 sept 2026): logotipo + «Punto de fichaje» */
   .cabecera{display:flex;flex-direction:column;align-items:center;gap:.8vh;margin-top:-2vh}
   .cabecera img{height:clamp(40px,7vh,80px);width:auto;filter:drop-shadow(0 4px 12px rgba(0,0,0,.35))}
@@ -134,7 +134,7 @@
     <img src="logo.png" alt="Academia Logaritmo" onerror="this.style.display='none'">
     <span>Punto de fichaje</span>
   </div>
-  <div><h1>Acerca tu carné</h1><p>Ponlo dentro del recuadro. Se lee solo.</p></div>
+  <div><h1 id="instr1">Acerca tu carné</h1><p id="instr2">Ponlo dentro del recuadro. Se lee solo.</p></div>
   <div class="pieReposo"><div class="reloj" id="reloj">--:--</div><div class="fecha" id="fecha"></div></div>
 </div>
 <button id="camBtn" type="button" onclick="cambiarCamara()">📷 Cámara frontal</button>
@@ -156,6 +156,10 @@ const API = 'https://script.google.com/macros/s/AKfycbxLbfrRn5U4dxrv2pc7D8tM6a09
 const CIERRE       = '20:30'; // la academia cierra a esta hora: ninguna opción pasa de aquí
 const ESPERA_FINAL = 10;   // segundos que se queda el mensaje antes de volver a la cámara
 const RELECTURA    = 4000; // ms de bloqueo tras leer, para no leer dos veces
+/* 1 oct 2026: antes se esperaba 10 s. La hoja a veces tarda más (sobre todo la primera
+   vez que se usa en un rato) y la tablet daba «error» aunque el fichaje SÍ se había
+   apuntado. Ahora espera hasta 25 s y, si pasa el carné otra vez, se retoma su entrada. */
+const ESPERA_HOJA  = 25;
 
 /* ───────────────────────── estado ───────────────────────── */
 const $ = s => document.querySelector(s);
@@ -254,12 +258,19 @@ function planoAula(modo, mesas, opc){
 function planoSVG(suya, mesas){ return planoAula('aqui', mesas, {suya: suya}); }
 
 function pantallaLeyendo(){
+  clearTimeout(temporizador);
+  // si la hoja tarda, que se vea que sigue trabajando y no parezca colgada
+  temporizador = setTimeout(() => {
+    const t = panel.querySelector('.texto');
+    if (t) t.textContent = 'La hoja va un poco lenta. Espera, no quites el móvil…';
+  }, 6000);
   mostrar('<div class="spin"></div>' +
           '<div class="titulo">Carné leído</div>' +
           '<div class="texto">Ya puedes retirar el móvil. Un momento…</div>');
 }
 
 function pantallaError(msg){
+  clearTimeout(temporizador);
   mostrar('<div class="icono">😕</div>' +
           '<div class="titulo">Vaya</div>' +
           '<div class="texto">' + msg + '</div>' +
@@ -270,7 +281,7 @@ function pantallaError(msg){
 /* «Tu mesa: Newton (M11)» en grande. Si no quedaba ninguna libre, el aviso. */
 function htmlMesa(r){
   if (r && r.mesa && r.mesa.nombre){
-    return '<div class="mesa"><small>Tu mesa</small><b>' + escapar(r.mesa.nombre) + '</b>' +
+    return '<div class="mesa"><small>Recuerda, tu mesa es</small><b>' + escapar(r.mesa.nombre) + '</b>' +
            '<i>M' + escapar(r.mesa.n) + '</i></div>';
   }
   if (r && r.mesaAviso) return '<div class="sinmesa">⚠️ ' + escapar(r.mesaAviso) + '</div>';
@@ -375,6 +386,11 @@ function pantallaElegir(r, k, total, despues, aviso){
   const elegir = async (n) => {
     if (hecho) return; hecho = true;
     clearTimeout(temporizador);
+    // 1 oct 2026: que se vea que está guardando (si no, parece colgada y tocan otra)
+    const nom = n ? ((r.mesas || []).find(m => m[0] === n) || [0, ''])[1] : '';
+    mostrar('<div class="spin"></div>' +
+            '<div class="titulo">' + (nom ? escapar(nom) : 'Buscándote mesa') + '</div>' +
+            '<div class="texto">Un segundo, estoy guardando tu mesa…</div>', 'verde');
     let res;
     try { res = await llamar({accion:'mesa', id:r.id, n:n}); } catch(e){ res = null; }
     if (res && res.ok && res.mesa){ r.mesa = res.mesa; despues(); }
@@ -422,7 +438,7 @@ function preguntar(r, k, total, despues){
 /* ── final: su mesa con el AQUÍ, y a sentarse ── */
 function pantallaListo(r, corto){
   planoActual = (r.mesa && SILLA[r.mesa.n]) ? planoSVG(r.mesa, r.mesas) : '';
-  pantallaFinal('✅', corto ? '¡Listo, ' + escapar(corto) + '!' : '¡Listo!',
+  pantallaFinal('✅', corto ? '¡Hola, ' + escapar(corto) + '!' : '¡Listo!',
     r.arranque ? 'Tienes <b>' + (r.margen || 5) + ' minutos</b> para sacar el material. La clase empieza a las <b>' + escapar(r.arranque) + '</b>.'
                : 'Fichado a las ' + horaActual() + '. Buena clase 💪',
     'verde', 12, htmlMesa(r));
@@ -436,7 +452,7 @@ async function fichar(codigo){
   try {
     r = await llamar({accion:'fichar', id:codigo});
   } catch(e){
-    pantallaError('No hay conexión con la hoja. Díselo a Javier.');
+    pantallaError('La hoja no ha contestado a tiempo. <b>Vuelve a pasar el carné</b>: no se duplica nada.');
     return;
   }
   if (!r || !r.ok){ pantallaError((r && r.error) || 'Algo ha fallado.'); return; }
@@ -499,7 +515,7 @@ function llamar(params){
       terminado = true;
       limpiar();
       reject(new Error('Tiempo de espera agotado'));
-    }, 10000);
+    }, ESPERA_HOJA*1000);
   });
 }
 
@@ -518,6 +534,14 @@ let flujo = null, bucle = false;
 function pintarBotonCam(){
   $('#camBtn').textContent = modoCam === 'user' ? '📷 Cámara frontal' : '📷 Cámara trasera';
   video.classList.toggle('espejo', modoCam === 'user');
+  // 1 oct 2026: dónde tiene que poner el móvil, según la cámara que esté puesta
+  if (modoCam === 'user'){
+    $('#instr1').textContent = 'Pon el móvil por DELANTE';
+    $('#instr2').textContent = 'Frente a la pantalla, dentro del recuadro. Se lee solo.';
+  } else {
+    $('#instr1').textContent = 'Pasa el móvil por DETRÁS';
+    $('#instr2').textContent = 'La cámara está en la parte de atrás de la tablet. Se lee solo.';
+  }
 }
 function cambiarCamara(){
   modoCam = modoCam === 'user' ? 'environment' : 'user';
