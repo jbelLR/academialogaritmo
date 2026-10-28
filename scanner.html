@@ -137,17 +137,12 @@
   .tk-busca .cursor{width:3px;align-self:stretch;margin:14px 0;background:#E9A93A;animation:parpadeo 1s steps(1) infinite}
   @keyframes parpadeo{50%{opacity:0}}
   .tk-cab button{min-width:0;padding:16px 22px}
-  .tk-lista{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
-    display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(150px,19vw,230px),1fr));
-    gap:10px;align-content:start;padding-right:4px}
-  .tk-grupo{grid-column:1/-1;font-size:clamp(13px,1.7vw,17px);font-weight:800;letter-spacing:.14em;
-    text-transform:uppercase;color:#E9A93A;margin-top:.6vh}
-  .tk-al{min-width:0;padding:14px 12px;border-radius:14px;background:rgba(255,255,255,.14);color:#fff;
-    font-size:clamp(17px,2.4vw,26px);text-align:left;line-height:1.15;touch-action:manipulation}
-  .tk-al.clase{background:rgba(46,158,106,.45);border:2px solid #2e9e6a}
-  .tk-al.suele{background:rgba(233,169,58,.22);border:2px solid rgba(233,169,58,.6)}
-  .tk-al small{display:block;font-size:.6em;font-weight:600;opacity:.75;margin-top:4px}
-  .tk-vacio{grid-column:1/-1;opacity:.7;font-size:clamp(16px,2.2vw,24px);padding:2vh 0}
+  /* como mucho 2 nombres (Javier, 28 oct 2026): nada de listas */
+  .tk-lista{flex:1 1 auto;min-height:0;display:flex;flex-wrap:wrap;gap:16px;align-content:center;justify-content:center}
+  .tk-al{flex:0 1 min(42vw,460px);min-width:0;padding:2.4vh 24px;border-radius:18px;background:#2e9e6a;color:#fff;
+    font-size:clamp(24px,4vw,46px);text-align:center;line-height:1.1;touch-action:manipulation}
+  .tk-al small{display:block;font-size:.45em;font-weight:600;opacity:.85;margin-top:6px}
+  .tk-vacio{width:100%;text-align:center;opacity:.8;font-size:clamp(18px,2.8vw,30px);padding:1vh 0}
   .tk-teclas{display:flex;flex-direction:column;gap:8px}
   .tk-fila{display:flex;gap:8px;justify-content:center}
   .tk-fila button{flex:1 1 0;min-width:0;padding:0;height:clamp(48px,7.6vh,86px);border-radius:12px;
@@ -526,40 +521,36 @@ function escapar(s){
 
 /* ═════════════════════════ FICHAR SIN QR (28 oct 2026) ═════════════════════════
    Para quien no trae el móvil. Botón abajo a la izquierda → teclado propio (no el de
-   la tablet) → lista de alumnos → «¿Eres Ana P.?» → el MISMO flujo que con el carné.
+   la tablet) → escribe su nombre → «¿Eres Ana P.?» → el MISMO flujo que con el carné.
    La hoja lo apunta con Origen «Autofichado manual»; si ya estaba dentro, es su salida.
-   El repo es público: aquí NO va ningún nombre. La lista llega de la hoja al abrir
-   (acción «sugerencias» del Codigo.gs), ya ordenada:
-     · tienen clase ahora y no han fichado
-     · suelen venir a esta hora y muchas veces no fichan
-     · el resto de alumnos activos, por orden alfabético */
-const TIEMPO_MANUAL = 60;   // s sin tocar nada → vuelve a la cámara
+   NADIE debe poder sacar la lista de alumnos (Javier): aquí no va ningún nombre (el
+   repo es público) y la tablet nunca recibe una lista. Manda las letras escritas
+   (mínimo MIN_LETRAS) a la acción «buscar» del Codigo.gs, que contesta con 1 o 2
+   nombres como mucho, y solo de un grupo reducido (ver apiBuscar allí). */
+const TIEMPO_MANUAL = 60;    // s sin tocar nada → vuelve a la cámara
+const MIN_LETRAS    = 3;     // lo mismo que SUG_MIN_LETRAS del Codigo.gs
+const ESPERA_TECLA  = 350;   // ms tras la última letra antes de preguntar a la hoja
 const TECLAS = ['QWERTYUIOP', 'ASDFGHJKLÑ', 'ZXCVBNM'];
-let manual = null;          // {texto, datos, error} mientras está abierto
+let manual = null;           // {texto, res, mas, estado, error, n, t} mientras está abierto
 
 function normaliza(s){
   return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 }
+function cuantasLetras(t){ return normaliza(t).replace(/[^a-z]/g, '').length; }
 
 function abrirManual(){
   if (ocupado) return;
   ocupado = true;
   planoActual = '';
-  const yo = manual = {texto:'', datos:null, error:''};
+  manual = {texto:'', res:[], mas:false, estado:'', error:'', n:0, t:null};
   pintarTeclado();
-  llamar({accion:'sugerencias'}).then(r => {
-    if (manual !== yo) return;                       // ya se cerró
-    if (r && r.ok) yo.datos = r;
-    else yo.error = 'No he podido cargar la lista' + (r && r.error ? ' (' + r.error + ')' : '') + '. Díselo a Javier.';
-    pintarLista();
-  }).catch(() => {
-    if (manual !== yo) return;
-    yo.error = 'La hoja no ha contestado. Cancela y vuelve a probar.';
-    pintarLista();
-  });
 }
 
-function cerrarManual(){ manual = null; ocultar(); }
+function cerrarManual(){
+  if (manual) clearTimeout(manual.t);
+  manual = null;
+  ocultar();
+}
 function vigilarManual(){
   clearTimeout(temporizador);
   temporizador = setTimeout(cerrarManual, TIEMPO_MANUAL * 1000);
@@ -582,22 +573,49 @@ function pintarTeclado(){
   $('#tkTeclas').addEventListener('click', e => {
     const b = e.target.closest('button');
     if (!b || !manual) return;
+    const antes = manual.texto;
     if (b.dataset.k !== undefined){
       if (manual.texto.length < 30) manual.texto = (manual.texto + b.dataset.k.toLowerCase()).replace(/^ +/, '').replace(/ {2,}/g, ' ');
     } else if (b.dataset.tk === 'borrar') manual.texto = manual.texto.slice(0, -1);
     else if (b.dataset.tk === 'limpiar') manual.texto = '';
-    pintarBusca(); pintarLista(); vigilarManual();
+    pintarBusca();
+    if (manual.texto.trim() !== antes.trim()) programarBusqueda();
+    vigilarManual();
   });
-  const lista = $('#tkLista');
-  lista.addEventListener('scroll', vigilarManual, {passive:true});
-  lista.addEventListener('click', e => {
+  $('#tkLista').addEventListener('click', e => {
     const b = e.target.closest('.tk-al');
-    if (!b || !manual || !manual.datos) return;
-    const d = manual.datos;
-    const a = [].concat(d.ahora || [], d.suelen || [], d.resto || []).find(x => x.id === b.dataset.id);
+    if (!b || !manual) return;
+    const a = manual.res.find(x => x.id === b.dataset.id);
     if (a) confirmarManual(a);
   });
   pintarBusca(); pintarLista(); vigilarManual();
+}
+
+function programarBusqueda(){
+  clearTimeout(manual.t);
+  manual.n++;                                   // lo que estuviera en camino ya no vale
+  manual.res = []; manual.mas = false; manual.error = '';
+  if (cuantasLetras(manual.texto) < MIN_LETRAS){ manual.estado = ''; pintarLista(); return; }
+  manual.estado = 'buscando';
+  pintarLista();
+  manual.t = setTimeout(buscarManual, ESPERA_TECLA);
+}
+
+function buscarManual(){
+  const yo = manual;
+  if (!yo) return;
+  const n = yo.n;
+  const vale = () => manual === yo && yo.n === n;
+  llamar({accion:'buscar', q: yo.texto.trim()}).then(r => {
+    if (!vale()) return;
+    if (r && r.ok){ yo.res = (r.res || []).slice(0, 2); yo.mas = !!r.mas; yo.estado = 'listo'; }
+    else { yo.estado = 'error'; yo.error = (r && r.error) || ''; }
+    pintarLista();
+  }).catch(() => {
+    if (!vale()) return;
+    yo.estado = 'error'; yo.error = 'la hoja no contesta';
+    pintarLista();
+  });
 }
 
 function pintarBusca(){
@@ -611,34 +629,20 @@ function pintarBusca(){
 function pintarLista(){
   const el = $('#tkLista');
   if (!el || !manual) return;
-  el.scrollTop = 0;
-  if (manual.error){ el.innerHTML = '<div class="tk-vacio">⚠️ ' + escapar(manual.error) + '</div>'; return; }
-  const d = manual.datos;
-  if (!d){ el.innerHTML = '<div class="tk-vacio">Cargando alumnos…</div>'; return; }
-  // cada palabra escrita tiene que ser el principio de alguna palabra del nombre (sin tildes)
-  const q = normaliza(manual.texto).split(/\s+/).filter(Boolean);
-  const pasa = a => {
-    const pal = normaliza(a.n + ' ' + a.id).split(/[\s.]+/).filter(Boolean);
-    return q.every(t => pal.some(w => w.indexOf(t) === 0));
-  };
-  const grupos = [
-    ['Tienen clase ahora',       d.ahora  || [], 'clase'],
-    ['Suelen venir a esta hora', d.suelen || [], 'suele'],
-    [(d.ahora || []).length || (d.suelen || []).length ? 'Resto de alumnos' : 'Alumnos', d.resto || [], '']
-  ];
-  let html = '', n = 0;
-  grupos.forEach(g => {
-    const l = g[1].filter(pasa);
-    if (!l.length) return;
-    n += l.length;
-    html += '<div class="tk-grupo">' + g[0] + '</div>' + l.map(a =>
-      '<button class="tk-al ' + g[2] + '" data-id="' + escapar(a.id) + '">' + escapar(a.n) +
-      (a.h ? '<small>Clase a las ' + escapar(a.h) + '</small>'
-           : a.d ? '<small>Ya dentro · fichar salida</small>' : '') +
-      '</button>').join('');
-  });
-  el.innerHTML = n ? html
-    : '<div class="tk-vacio">No encuentro a nadie con «' + escapar(manual.texto) + '». Revisa cómo lo has escrito o díselo a Javier.</div>';
+  const aviso = t => '<div class="tk-vacio">' + t + '</div>';
+  if (cuantasLetras(manual.texto) < MIN_LETRAS){ el.innerHTML = aviso('Escribe al menos ' + MIN_LETRAS + ' letras de tu nombre.'); return; }
+  if (manual.estado === 'buscando'){ el.innerHTML = aviso('Buscando…'); return; }
+  if (manual.estado === 'error'){
+    el.innerHTML = aviso('⚠️ No he podido buscar' + (manual.error ? ' (' + escapar(manual.error) + ')' : '') + '. Prueba otra vez o díselo a Javier.');
+    return;
+  }
+  if (!manual.res.length){ el.innerHTML = aviso('No te encuentro. Pasa el carné o díselo a Javier.'); return; }
+  el.innerHTML = manual.res.map(a =>
+      '<button class="tk-al" data-id="' + escapar(a.id) + '">' + escapar(a.n) +
+      (a.d ? '<small>Ya dentro · fichar salida</small>'
+           : a.h ? '<small>Clase a las ' + escapar(a.h) + '</small>' : '') +
+      '</button>').join('') +
+    (manual.mas ? aviso('¿No eres tú? Sigue escribiendo tu nombre.') : '');
 }
 
 function confirmarManual(a){
