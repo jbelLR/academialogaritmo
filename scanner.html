@@ -36,8 +36,8 @@
     color:#E9A93A;padding:4px 14px;border:1.5px solid rgba(233,169,58,.55);border-radius:99px;background:rgba(15,58,77,.55)}
   .pieReposo{display:flex;flex-direction:column;align-items:center;gap:.6vh}
   /* botón para cambiar de cámara: discreto, abajo a la derecha */
-  #camBtn{position:fixed;right:2.5vw;bottom:3vh;z-index:4;font:inherit;font-size:clamp(13px,1.7vw,17px);font-weight:700;
-    padding:10px 16px;min-width:0;border-radius:99px;border:1.5px solid rgba(255,255,255,.3);
+  #camBtn{position:fixed;right:2.5vw;bottom:3vh;z-index:4;font:inherit;font-size:clamp(18px,2.6vw,28px);font-weight:800;
+    padding:18px 28px;min-width:0;border-radius:99px;border:2px solid rgba(255,255,255,.4);
     background:rgba(15,58,77,.7);color:#fff;cursor:pointer}
   .reloj{font-size:clamp(30px,6vw,64px);font-weight:800;color:#E9A93A;line-height:1}
   .fecha{font-size:clamp(13px,2vw,20px);opacity:.7;text-transform:capitalize}
@@ -123,9 +123,11 @@
     padding:12px;text-align:center;font-size:15px;font-weight:700;display:none;z-index:9}
 
   /* ── FICHAR SIN QR (28 oct 2026): botón abajo a la izquierda + teclado propio ── */
-  #manBtn{position:fixed;left:2.5vw;bottom:3vh;z-index:4;font:inherit;font-size:clamp(15px,2vw,21px);font-weight:800;
-    padding:12px 20px;min-width:0;border-radius:99px;border:0;background:#E9A93A;color:#20160A;cursor:pointer;
+  #manBtn{position:fixed;left:2.5vw;bottom:3vh;z-index:4;font:inherit;font-size:clamp(22px,3.4vw,36px);font-weight:800;
+    padding:20px 34px;min-width:0;border-radius:99px;border:0;background:#E9A93A;color:#20160A;cursor:pointer;
     box-shadow:0 4px 14px rgba(0,0,0,.3)}
+  /* con los botones grandes, en vertical el reloj sube para que no lo tapen */
+  @media (orientation:portrait){ #reposo{padding-bottom:calc(5vh + 100px)} }
   #panel.teclado{justify-content:flex-start;align-items:stretch;text-align:left;gap:1.4vh;padding:2vh 2vw}
   .tk-cab{display:flex;gap:12px;align-items:center}
   .tk-busca{flex:1;min-width:0;min-height:clamp(52px,8vh,80px);display:flex;align-items:center;gap:10px;
@@ -477,7 +479,7 @@ function pantallaListo(r, corto){
     'verde', 12, htmlMesa(r));
 }
 
-/* manual = true → viene de «Fichar sin QR»: mismo fichaje, pero la hoja apunta Origen «Manual». */
+/* manual = true → viene de «Fichar sin QR»: mismo fichaje, pero la hoja apunta Origen «Autofichado manual». */
 async function fichar(codigo, manual){
   ocupado = true;
   planoActual = '';
@@ -525,7 +527,7 @@ function escapar(s){
 /* ═════════════════════════ FICHAR SIN QR (28 oct 2026) ═════════════════════════
    Para quien no trae el móvil. Botón abajo a la izquierda → teclado propio (no el de
    la tablet) → lista de alumnos → «¿Eres Ana P.?» → el MISMO flujo que con el carné.
-   La hoja lo apunta con Origen «Manual»; si ya estaba dentro, es su salida.
+   La hoja lo apunta con Origen «Autofichado manual»; si ya estaba dentro, es su salida.
    El repo es público: aquí NO va ningún nombre. La lista llega de la hoja al abrir
    (acción «sugerencias» del Codigo.gs), ya ordenada:
      · tienen clase ahora y no han fichado
